@@ -1,1 +1,6 @@
-This is the second file created in the test-me repository.
+This is file2.txt with updated content.
+
+Here's some new information:
+- Updated on the reddy branch
+- Contains sample data for testing
+- Ready for version control operations
