@@ -1,1 +1,6 @@
 This is the first file created in the test-me repository.
+
+Modified on the reddy branch:
+- Added new lines for testing
+- Demonstrating file editing capabilities
+- Timestamp: 2024
