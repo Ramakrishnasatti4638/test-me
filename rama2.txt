@@ -1,0 +1,8 @@
+This is rama2.txt - a sample file for the test-me repository.
+
+Some example content:
+- File creation demonstration
+- Testing file operations
+- Sample text for rama2.txt
+
+You can edit or update this content as needed.

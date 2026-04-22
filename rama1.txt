@@ -1,0 +1,5 @@
+Hello! This is a sample text file created for the test-me repository.
+
+It contains some example content to demonstrate file creation.
+
+You can add more content here as needed.
