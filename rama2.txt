@@ -1,0 +1,17 @@
+Welcome to rama2.txt!
+
+This is another text file with different content.
+
+Some interesting facts:
+- The sky is blue
+- Water boils at 100°C
+- Earth revolves around the Sun
+
+Code snippet example:
+```
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+```
+
+End of file.
