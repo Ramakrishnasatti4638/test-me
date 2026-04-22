@@ -1,10 +1,18 @@
-Hello! This is rama1.txt file.
+This is the EDITED rama1.txt file!
 
-This file contains some sample content to demonstrate file creation.
-You can add whatever you need here.
+Content has been updated with new information.
 
-- Item 1
-- Item 2
-- Item 3
+Here are some programming languages:
+- Python
+- JavaScript
+- Java
+- C++
+- Go
+- Rust
 
-Have a great day!
+Additional notes:
+* This file was modified successfully
+* You can edit files multiple times
+* Changes are saved immediately
+
+Updated content - Version 2.0
