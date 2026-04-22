@@ -1,0 +1,8 @@
+This is rama3.txt - another sample file in the test-me repository.
+
+Here are some interesting facts:
+- This file was created as part of a testing exercise
+- It demonstrates the ability to create multiple files
+- You can use this space for any purpose you need
+
+Feel free to modify this content anytime!
