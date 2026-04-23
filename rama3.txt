@@ -1,0 +1,8 @@
+This is rama3.txt file with sample content.
+
+Some interesting text goes here:
+- Programming is fun
+- AI assistants are helpful
+- Testing features is important
+
+End of rama3.txt content.
