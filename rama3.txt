@@ -1,0 +1,9 @@
+Welcome to rama3.txt!
+
+This file contains some interesting content:
+- Item one
+- Item two
+- Item three
+
+End of file.
+Thank you
