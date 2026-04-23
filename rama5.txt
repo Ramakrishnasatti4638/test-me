@@ -1,0 +1,13 @@
+This is the rama5.txt file.
+
+Content includes:
+1. First section
+2. Second section
+3. Third section
+
+Additional information:
+- Detail one
+- Detail two
+- Detail three
+
+End of rama5.txt
