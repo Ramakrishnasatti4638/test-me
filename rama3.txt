@@ -1,0 +1,8 @@
+This is rama3.txt - another test file.
+
+Content includes:
+- Multiple lines of text
+- Sample data for demonstration
+- Created as part of repository testing
+
+End of file.
