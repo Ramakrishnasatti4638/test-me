@@ -1,0 +1,10 @@
+Hello! This is a test file created by Code Studio.
+
+This file contains some sample content to demonstrate file creation.
+
+Here are a few interesting facts:
+- The speed of light is approximately 299,792,458 meters per second
+- Python was first released in 1991
+- The first computer bug was an actual moth found in a computer in 1947
+
+End of file.
