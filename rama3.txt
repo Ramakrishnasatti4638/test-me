@@ -1,0 +1,8 @@
+Hello! This is rama3.txt
+
+This file contains some sample content including:
+- A greeting message
+- Some bullet points
+- And this text right here
+
+Feel free to modify this content as needed.
