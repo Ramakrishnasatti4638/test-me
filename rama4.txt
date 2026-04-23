@@ -1,0 +1,8 @@
+This is rama4.txt file.
+
+Here's some sample content:
+- First point
+- Second point
+- Third point
+
+Have a great day!
