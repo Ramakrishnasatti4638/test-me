@@ -1,0 +1,8 @@
+Hello! This is a sample text file created for testing purposes.
+
+Here are some interesting facts:
+- The sun is approximately 93 million miles from Earth
+- Water boils at 100°C (212°F) at sea level
+- The human brain contains about 86 billion neurons
+
+This file demonstrates basic text content with multiple lines and formatting.
