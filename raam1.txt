@@ -1,0 +1,10 @@
+This is a sample text file created in the test-me directory.
+
+It contains some example content to demonstrate file creation.
+
+Here are a few lines:
+- Line 1: Hello World
+- Line 2: Testing file operations
+- Line 3: Success!
+
+End of file.
