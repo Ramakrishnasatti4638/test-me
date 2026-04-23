@@ -1,0 +1,4 @@
+This is rama1.txt file with some sample content.
+
+You can add any text you want here.
+This file was created as requested.
