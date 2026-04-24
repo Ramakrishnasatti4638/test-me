@@ -1,0 +1,12 @@
+This is rama1.txt file.
+
+This file was created as a test file in the test-me repository.
+It contains sample content to demonstrate file creation.
+
+Here are some interesting facts:
+- The sky is blue
+- Water is essential for life
+- Code makes the world go round
+- Learning is a continuous journey
+
+End of file.
