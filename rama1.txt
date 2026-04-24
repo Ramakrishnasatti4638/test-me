@@ -1,0 +1,6 @@
+Hello! This is rama1.txt.
+
+This file was created as part of a coding session.
+Feel free to edit or expand this content as needed.
+
+- Created by Code Studio
