@@ -1,0 +1,8 @@
+This is rama1.txt file created in the test-me repository.
+
+It contains some sample content including:
+- A list of items
+- Multiple lines of text
+- Some interesting information
+
+The file was created as requested and can be used for testing purposes.
