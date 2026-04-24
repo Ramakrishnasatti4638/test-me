@@ -1,0 +1,11 @@
+Welcome to rama1.txt!
+
+This is a sample file created in the test-me repository.
+It contains some example content for demonstration purposes.
+
+Here are some interesting facts:
+- The sky appears blue due to Rayleigh scattering
+- Water covers about 71% of Earth's surface
+- A year on Venus is shorter than a day on Venus
+
+Have a great day!
