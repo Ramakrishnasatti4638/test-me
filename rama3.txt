@@ -1,0 +1,6 @@
+Hello! This is rama3.txt.
+
+This file contains some sample content created during a coding session.
+You can modify or expand this content as needed.
+
+- Created by Code Studio
