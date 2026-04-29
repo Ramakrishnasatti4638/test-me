@@ -1,0 +1,10 @@
+Hello! This is rama2.txt.
+
+This is the second file in the rama series.
+
+Fun Facts:
+1. The Earth is approximately 4.5 billion years old.
+2. Light travels at 299,792,458 meters per second.
+3. There are more stars in the universe than grains of sand on Earth.
+4. Honey never spoils — archaeologists have found 3,000-year-old honey in Egyptian tombs.
+5. A day on Venus is longer than a year on Venus.
