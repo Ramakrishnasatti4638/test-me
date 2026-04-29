@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>My Todos</h1>
+        <p class="subtitle">Stay organised, get things done.</p>
+      </header>
+
+      <form id="todo-form">
+        <input
+          type="text"
+          id="todo-input"
+          placeholder="What needs to be done?"
+          autocomplete="off"
+          maxlength="200"
+        />
+        <button type="submit" aria-label="Add todo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="completed">Completed</button>
+      </div>
+
+      <ul id="todo-list"></ul>
+
+      <footer id="todo-footer" class="hidden">
+        <span id="items-left"></span>
+        <button id="clear-completed">Clear completed</button>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
