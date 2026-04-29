@@ -1,0 +1,8 @@
+Hello! This is rama1.txt.
+
+This file was created as a sample text file.
+It contains some placeholder content for demonstration purposes.
+
+- Line 1: The quick brown fox jumps over the lazy dog.
+- Line 2: To be or not to be, that is the question.
+- Line 3: All that glitters is not gold.
