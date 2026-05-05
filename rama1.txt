@@ -1,0 +1,2 @@
+This is rama1.txt - a test file with some sample content.
+You can add more text here as needed.
