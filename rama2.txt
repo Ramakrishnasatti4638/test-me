@@ -1,0 +1,2 @@
+This is rama2.txt content.
+Created by Code Studio.

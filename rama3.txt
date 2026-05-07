@@ -1,0 +1,2 @@
+This is rama3.txt content.
+Created by Code Studio after rama2.txt.
