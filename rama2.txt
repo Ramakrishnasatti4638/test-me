@@ -1,0 +1,11 @@
+This is the content of rama2.txt
+
+Welcome to the second file!
+This file also contains sample text.
+
+Some more interesting facts:
+- Light travels at approximately 299,792 km/s
+- There are 7 continents on Earth
+- Honey never spoils
+
+End of rama2.txt content.

@@ -1,0 +1,11 @@
+This is the content of rama1.txt
+
+Welcome to the first file!
+This file contains some sample text to demonstrate file creation.
+
+Here are some interesting facts:
+- The sky is blue
+- Water freezes at 0°C
+- The Earth orbits the Sun
+
+End of rama1.txt content.
