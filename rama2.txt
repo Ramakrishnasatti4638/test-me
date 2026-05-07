@@ -1,0 +1,2 @@
+This is rama2.txt.
+Here is some sample content as requested.

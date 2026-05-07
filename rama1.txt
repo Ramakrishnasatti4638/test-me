@@ -1,0 +1,2 @@
+This is rama1.txt.
+You can put any content here.
