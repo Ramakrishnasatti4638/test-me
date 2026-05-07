@@ -1,0 +1,2 @@
+This is the content for rama2.txt file.
+It contains some sample text to demonstrate file creation.
