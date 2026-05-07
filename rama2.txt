@@ -1,0 +1,2 @@
+Sample content for rama2.txt
+Line 2: additional text.
