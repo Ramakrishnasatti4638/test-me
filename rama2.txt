@@ -1,0 +1,2 @@
+Sample content inside rama2.txt
+Created by Code Studio.
