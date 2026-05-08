@@ -1,0 +1,2 @@
+Hello from Code Studio!
+This is rama1.txt with some sample content.
