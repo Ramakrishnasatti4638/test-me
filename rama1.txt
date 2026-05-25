@@ -1,0 +1,9 @@
+Welcome to rama1.txt
+
+This is a sample text file created with some content.
+You can add more text here as needed.
+
+Key information:
+- File created successfully
+- Ready for further edits
+- Simple and clean format
