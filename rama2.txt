@@ -1,0 +1,10 @@
+This is rama2.txt in the test-me repository.
+
+This file demonstrates creating content in a separate repository.
+Features:
+- Multi-line content
+- Simple text format
+- Part of parallel repository workflow
+
+Date: 2024
+Purpose: Testing cross-repository file creation and PR workflow.
