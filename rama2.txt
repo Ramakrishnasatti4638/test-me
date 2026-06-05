@@ -1,0 +1,5 @@
+This is a test file created in the test-me repository.
+
+Hello from rama2.txt!
+
+This file contains sample content to demonstrate file creation and PR workflow.
