@@ -1,0 +1,1 @@
+This is content for rama2.txt file in test-me repository
