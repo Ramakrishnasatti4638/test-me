@@ -1,0 +1,9 @@
+This is a test file created in the test-me repository.
+It contains sample content for testing purposes.
+
+Features:
+- Plain text format
+- Easy to read
+- Automated creation
+
+Version: 1.0
