@@ -1,0 +1,6 @@
+Hello from test-me repository!
+
+This is rama2.txt file created in the test-me repository.
+It contains sample content for testing purposes.
+
+Created by Code Studio Assistant.
