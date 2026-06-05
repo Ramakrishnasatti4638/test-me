@@ -1,0 +1,6 @@
+This is a test file created in the test-me repository.
+
+Content includes:
+- Sample text for testing
+- Multiple lines of content
+- Created by Code Studio assistant
