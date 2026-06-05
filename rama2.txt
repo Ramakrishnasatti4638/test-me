@@ -1,0 +1,6 @@
+This is a test file created in the test-me repository.
+
+Content:
+- Line 1: Hello from rama2.txt
+- Line 2: This file demonstrates file creation
+- Line 3: Created for testing purposes
