@@ -1,0 +1,10 @@
+This is rama2.txt file in the test-me repository.
+
+This file contains sample content to demonstrate file creation and PR workflow.
+
+Content includes:
+- Sample text
+- Multiple lines of content
+- Example data entries
+
+Created as part of a test workflow.
