@@ -1,0 +1,8 @@
+Hello from test-me repository!
+
+This is a test file created for multi-repo demonstration.
+It showcases the ability to work across different repositories.
+
+Repository: test-me
+Created: 2024
+Purpose: Testing automated file creation and PR workflow
