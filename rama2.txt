@@ -1,0 +1,6 @@
+This is a test file created in the test-me repository.
+
+Content:
+- Line 1: Hello from rama2.txt
+- Line 2: This demonstrates cross-repo operations
+- Line 3: Test content for analytics
