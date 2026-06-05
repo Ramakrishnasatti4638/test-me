@@ -1,0 +1,8 @@
+This is rama2.txt file in test-me repository.
+
+Created as part of a test to demonstrate multi-repository file creation and PR workflow.
+
+Content includes:
+- Sample text data
+- Timestamp: 2024
+- Purpose: Testing repository operations
