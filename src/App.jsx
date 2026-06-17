@@ -1,3 +1,4 @@
+// Notes App Frontend - React + Vite
 import { useState, useEffect } from 'react';
 import './App.css';
 
