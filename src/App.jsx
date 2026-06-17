@@ -97,6 +97,7 @@ function App() {
                 </button>
               </div>
               <p>{note.body.substring(0, 50)}{note.body.length > 50 ? '...' : ''}</p>
+              <span className="note-date">{new Date(note.created_at).toLocaleDateString()}</span>
             </div>
           ))}
         </div>
