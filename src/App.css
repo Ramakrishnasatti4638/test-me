@@ -1,0 +1,166 @@
+.app {
+  display: flex;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.sidebar {
+  width: 320px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.sidebar-header h1 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.new-note-btn {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.new-note-btn:hover {
+  background: #0056b3;
+}
+
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.note-item {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.note-item:hover {
+  background: #f8f9fa;
+}
+
+.note-item.active {
+  background: #e3f2fd;
+}
+
+.note-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.note-item h3 {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.note-item p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  transition: color 0.2s;
+}
+
+.delete-btn:hover {
+  color: #e53e3e;
+}
+
+.editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.title-input {
+  font-size: 28px;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  background: transparent;
+  color: #333;
+}
+
+.title-input::placeholder {
+  color: #ccc;
+}
+
+.body-input {
+  flex: 1;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  resize: none;
+  line-height: 1.6;
+  background: transparent;
+  color: #333;
+  font-family: inherit;
+}
+
+.body-input::placeholder {
+  color: #ccc;
+}
+
+.save-btn {
+  align-self: flex-start;
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #218838;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state p {
+  font-size: 18px;
+  color: #999;
+}
