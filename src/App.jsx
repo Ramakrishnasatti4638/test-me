@@ -56,6 +56,20 @@ function App() {
     }
   };
 
+  const updateNote = async (id, updatedTitle, updatedBody) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: updatedTitle, body: updatedBody })
+      });
+      const updatedNote = await response.json();
+      setNotes(notes.map(note => note.id === id ? updatedNote : note));
+    } catch (error) {
+      console.error('Error updating note:', error);
+    }
+  };
+
   const selectNote = (note) => {
     setSelectedNote(note);
     setTitle(note.title);
@@ -68,6 +82,22 @@ function App() {
     setSelectedNote(null);
     setTitle('');
     setBody('');
+  };
+
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+    if (selectedNote && !isCreating) {
+      updateNote(selectedNote.id, newTitle, body);
+    }
+  };
+
+  const handleBodyChange = (e) => {
+    const newBody = e.target.value;
+    setBody(newBody);
+    if (selectedNote && !isCreating) {
+      updateNote(selectedNote.id, title, newBody);
+    }
   };
 
   return (
@@ -108,13 +138,13 @@ function App() {
               type="text"
               placeholder="Note title..."
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={handleTitleChange}
               className="title-input"
             />
             <textarea
               placeholder="Start typing your note..."
               value={body}
-              onChange={(e) => setBody(e.target.value)}
+              onChange={handleBodyChange}
               className="body-input"
             />
             {isCreating && (
