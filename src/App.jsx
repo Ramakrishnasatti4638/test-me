@@ -42,6 +42,21 @@ function App() {
     }
   };
 
+  const updateNote = async (id, updatedTitle, updatedBody) => {
+    try {
+      await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: updatedTitle, body: updatedBody })
+      });
+      setNotes(notes.map(note =>
+        note.id === id ? { ...note, title: updatedTitle, body: updatedBody } : note
+      ));
+    } catch (error) {
+      console.error('Error updating note:', error);
+    }
+  };
+
   const deleteNote = async (id) => {
     try {
       await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
@@ -62,6 +77,15 @@ function App() {
     setBody(note.body);
     setIsCreating(false);
   };
+
+  useEffect(() => {
+    if (selectedNote && !isCreating) {
+      const timeoutId = setTimeout(() => {
+        updateNote(selectedNote.id, title, body);
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [title, body]);
 
   const startNewNote = () => {
     setIsCreating(true);
