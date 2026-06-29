@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Metrics Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .dashboard {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .last-updated {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-unit {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .status.connected {
+            background: #10b981;
+            color: white;
+        }
+
+        .status.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .updating {
+            animation: pulse 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Server Metrics Dashboard</h1>
+        <div class="last-updated">Last updated: <span id="timestamp">Never</span></div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">CPU Usage</div>
+                <div class="metric-value" id="cpu">--</div>
+                <div class="metric-unit">%</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Memory Usage</div>
+                <div class="metric-value" id="memory">--</div>
+                <div class="metric-unit">%</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Requests/Second</div>
+                <div class="metric-value" id="rps">--</div>
+                <div class="metric-unit">req/s</div>
+            </div>
+        </div>
+
+        <div class="status connected" id="status">Connected</div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/metrics';
+        const POLL_INTERVAL = 2000;
+
+        const elements = {
+            cpu: document.getElementById('cpu'),
+            memory: document.getElementById('memory'),
+            rps: document.getElementById('rps'),
+            timestamp: document.getElementById('timestamp'),
+            status: document.getElementById('status')
+        };
+
+        async function fetchMetrics() {
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Add animation class
+                document.querySelector('.metrics-grid').classList.add('updating');
+                
+                // Update values
+                elements.cpu.textContent = data.cpu.toFixed(2);
+                elements.memory.textContent = data.memory.toFixed(2);
+                elements.rps.textContent = data.requests_per_second.toFixed(2);
+                
+                // Update timestamp
+                const now = new Date();
+                elements.timestamp.textContent = now.toLocaleTimeString();
+                
+                // Update status
+                elements.status.textContent = 'Connected';
+                elements.status.className = 'status connected';
+                
+                // Remove animation class after a brief delay
+                setTimeout(() => {
+                    document.querySelector('.metrics-grid').classList.remove('updating');
+                }, 300);
+                
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+                elements.status.textContent = 'Connection Error';
+                elements.status.className = 'status error';
+            }
+        }
+
+        // Fetch immediately on load
+        fetchMetrics();
+
+        // Then poll every 2 seconds
+        setInterval(fetchMetrics, POLL_INTERVAL);
+    </script>
+</body>
+</html>
