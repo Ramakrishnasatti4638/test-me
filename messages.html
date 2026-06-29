@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        #messages {
+            list-style: none;
+        }
+
+        .message-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .message-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-text {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .message-meta {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 16px;
+            padding: 20px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #c33;
+        }
+
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📬 Messages</h1>
+        <p class="subtitle">Fetched from Node.js backend on port 3000</p>
+        <button class="refresh-btn" onclick="loadMessages()">🔄 Refresh Messages</button>
+        <div id="content">
+            <div class="loading">Loading messages...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadMessages() {
+            const content = document.getElementById('content');
+            content.innerHTML = '<div class="loading">Loading messages...</div>';
+
+            try {
+                const response = await fetch('http://localhost:3000/messages');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const messages = await response.json();
+                
+                if (messages.length === 0) {
+                    content.innerHTML = '<p class="loading">No messages found.</p>';
+                    return;
+                }
+
+                const messagesList = messages.map(msg => `
+                    <li class="message-item">
+                        <div class="message-text">${escapeHtml(msg.text)}</div>
+                        <div class="message-meta">ID: ${msg.id} • ${new Date(msg.timestamp).toLocaleString()}</div>
+                    </li>
+                `).join('');
+
+                content.innerHTML = `<ul id="messages">${messagesList}</ul>`;
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="error">
+                        <strong>Error loading messages:</strong><br>
+                        ${escapeHtml(error.message)}<br><br>
+                        Make sure the backend server is running on port 3000.
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load messages when page loads
+        loadMessages();
+    </script>
+</body>
+</html>
