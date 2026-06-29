@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messages</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4f46e5;
+    }
+
+    header p {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    #message-list {
+      width: 100%;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border-left: 4px solid #4f46e5;
+      animation: fadeIn 0.3s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card .author {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #4f46e5;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card .text {
+      font-size: 1rem;
+      line-height: 1.55;
+      color: #374151;
+    }
+
+    #status {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-top: 12px;
+    }
+
+    #status.error {
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>💬 Messages</h1>
+    <p>Fetched live from the Node.js API on port 3000</p>
+  </header>
+
+  <div id="message-list">
+    <p id="status">Loading messages…</p>
+  </div>
+
+  <script>
+    const list   = document.getElementById('message-list');
+    const status = document.getElementById('status');
+
+    fetch('http://localhost:3000/messages')
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(messages => {
+        list.innerHTML = '';
+        if (messages.length === 0) {
+          list.innerHTML = '<p id="status">No messages found.</p>';
+          return;
+        }
+        messages.forEach((msg, i) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.style.animationDelay = `${i * 60}ms`;
+          card.innerHTML = `
+            <div class="author">${escapeHtml(msg.author)}</div>
+            <div class="text">${escapeHtml(msg.text)}</div>
+          `;
+          list.appendChild(card);
+        });
+      })
+      .catch(err => {
+        status.textContent = `Failed to load messages: ${err.message}`;
+        status.className = 'error';
+      });
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>
