@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 32px;
+        }
+        
+        #messages {
+            list-style: none;
+        }
+        
+        .message {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-text {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .message-meta {
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📬 Messages</h1>
+        <ul id="messages">
+            <li class="loading">Loading messages...</li>
+        </ul>
+    </div>
+
+    <script>
+        async function fetchMessages() {
+            const messagesContainer = document.getElementById('messages');
+            
+            try {
+                const response = await fetch('http://localhost:3000/messages');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const messages = await response.json();
+                
+                messagesContainer.innerHTML = '';
+                
+                if (messages.length === 0) {
+                    messagesContainer.innerHTML = '<li class="loading">No messages found</li>';
+                    return;
+                }
+                
+                messages.forEach(message => {
+                    const li = document.createElement('li');
+                    li.className = 'message';
+                    
+                    const timestamp = new Date(message.timestamp).toLocaleString();
+                    
+                    li.innerHTML = `
+                        <div class="message-text">${message.text}</div>
+                        <div class="message-meta">ID: ${message.id} | ${timestamp}</div>
+                    `;
+                    
+                    messagesContainer.appendChild(li);
+                });
+                
+            } catch (error) {
+                messagesContainer.innerHTML = `
+                    <li class="error">
+                        <strong>Error loading messages:</strong> ${error.message}
+                        <br><br>
+                        Make sure the backend server is running on http://localhost:3000
+                    </li>
+                `;
+            }
+        }
+        
+        fetchMessages();
+    </script>
+</body>
+</html>
