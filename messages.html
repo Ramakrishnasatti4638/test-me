@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+        
+        #messages {
+            list-style: none;
+        }
+        
+        .message {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .message:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-text {
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .message-time {
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+        }
+        
+        .error {
+            background: #fee;
+            border-left-color: #e74c3c;
+            color: #c0392b;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📬 Messages</h1>
+        <ul id="messages">
+            <li class="loading">Loading messages...</li>
+        </ul>
+        <button onclick="loadMessages()">Refresh Messages</button>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/messages';
+        
+        async function loadMessages() {
+            const messagesContainer = document.getElementById('messages');
+            messagesContainer.innerHTML = '<li class="loading">Loading messages...</li>';
+            
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const messages = await response.json();
+                
+                if (messages.length === 0) {
+                    messagesContainer.innerHTML = '<li class="message">No messages found</li>';
+                    return;
+                }
+                
+                messagesContainer.innerHTML = messages.map(msg => `
+                    <li class="message">
+                        <div class="message-text">${msg.text}</div>
+                        <div class="message-time">ID: ${msg.id} • ${new Date(msg.timestamp).toLocaleString()}</div>
+                    </li>
+                `).join('');
+                
+            } catch (error) {
+                messagesContainer.innerHTML = `
+                    <li class="message error">
+                        <div class="message-text">Error loading messages</div>
+                        <div class="message-time">${error.message}</div>
+                    </li>
+                `;
+            }
+        }
+        
+        // Load messages when page loads
+        loadMessages();
+    </script>
+</body>
+</html>
