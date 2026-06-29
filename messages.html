@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #messages {
+            list-style: none;
+            padding: 0;
+        }
+        .message {
+            background: #f5f5f5;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .message-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .message-timestamp {
+            font-size: 12px;
+            color: #888;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #c33;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Messages</h1>
+        <div id="messages" class="loading">Loading messages...</div>
+    </div>
+
+    <script>
+        const messagesContainer = document.getElementById('messages');
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch('http://localhost:3000/messages');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const messages = await response.json();
+                displayMessages(messages);
+            } catch (error) {
+                messagesContainer.innerHTML = `<div class="error">Error loading messages: ${error.message}</div>`;
+            }
+        }
+
+        function displayMessages(messages) {
+            if (!messages || messages.length === 0) {
+                messagesContainer.innerHTML = '<div class="loading">No messages found</div>';
+                return;
+            }
+
+            const messagesList = messages.map(msg => `
+                <li class="message">
+                    <div class="message-text">${msg.text}</div>
+                    <div class="message-timestamp">ID: ${msg.id} | ${new Date(msg.timestamp).toLocaleString()}</div>
+                </li>
+            `).join('');
+
+            messagesContainer.innerHTML = `<ul id="messages">${messagesList}</ul>`;
+        }
+
+        fetchMessages();
+    </script>
+</body>
+</html>
