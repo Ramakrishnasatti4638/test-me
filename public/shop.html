@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Shop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Our Products</h1>
+    <button id="cart-toggle" class="cart-button">
+      🛒 Cart (<span id="cart-count">0</span>)
+    </button>
+  </header>
+
+  <main class="container">
+    <div class="products-grid">
+      <div class="product-card" data-id="1" data-name="Wireless Headphones" data-price="79.99">
+        <div class="product-image">🎧</div>
+        <h3>Wireless Headphones</h3>
+        <p class="price">$79.99</p>
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-id="2" data-name="Smart Watch" data-price="199.99">
+        <div class="product-image">⌚</div>
+        <h3>Smart Watch</h3>
+        <p class="price">$199.99</p>
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-id="3" data-name="Laptop Stand" data-price="39.99">
+        <div class="product-image">💻</div>
+        <h3>Laptop Stand</h3>
+        <p class="price">$39.99</p>
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-id="4" data-name="Mechanical Keyboard" data-price="129.99">
+        <div class="product-image">⌨️</div>
+        <h3>Mechanical Keyboard</h3>
+        <p class="price">$129.99</p>
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-id="5" data-name="Wireless Mouse" data-price="49.99">
+        <div class="product-image">🖱️</div>
+        <h3>Wireless Mouse</h3>
+        <p class="price">$49.99</p>
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-id="6" data-name="USB-C Hub" data-price="59.99">
+        <div class="product-image">🔌</div>
+        <h3>USB-C Hub</h3>
+        <p class="price">$59.99</p>
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Cart Sidebar -->
+  <div id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h2>Shopping Cart</h2>
+      <button id="close-cart" class="close-btn">✕</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <p class="empty-cart">Your cart is empty</p>
+    </div>
+    <div class="cart-footer">
+      <div class="total">
+        <span>Total:</span>
+        <span id="cart-total">$0.00</span>
+      </div>
+      <button class="checkout-btn">Checkout</button>
+    </div>
+  </div>
+
+  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <script src="cart.js"></script>
+</body>
+</html>
