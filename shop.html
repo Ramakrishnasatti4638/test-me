@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Shop</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .product-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .product-price {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+
+    .add-to-cart-btn {
+      width: 100%;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .add-to-cart-btn:hover {
+      opacity: 0.9;
+    }
+
+    .add-to-cart-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Cart Sidebar */
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+
+    .cart-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .close-cart {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+    }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+      gap: 15px;
+    }
+
+    .cart-item-info {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .cart-item-price {
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quantity-btn {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .quantity {
+      font-weight: 600;
+      font-size: 1.1rem;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .cart-footer {
+      border-top: 2px solid #e0e0e0;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .total-amount {
+      color: #667eea;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .empty-cart p {
+      font-size: 1.1rem;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 999;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (max-width: 768px) {
+      .cart-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+      
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛍️ Product Store</h1>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h2>Shopping Cart</h2>
+      <button class="close-cart" id="closeCart">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total:</span>
+        <span class="total-amount" id="totalAmount">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+    let cart = [];
+
+    // Fetch and display products
+    async function loadProducts() {
+      try {
+        const response = await fetch(`${API_URL}/products`);
+        const products = await response.json();
+        displayProducts(products);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    }
+
+    function displayProducts(products) {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = products.map(product => `
+        <div class="product-card">
+          <div class="product-name">${product.name}</div>
+          <div class="product-price">$${product.price.toFixed(2)}</div>
+          <button class="add-to-cart-btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price})">
+            Add to Cart
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function addToCart(id, name, price) {
+      const existingItem = cart.find(item => item.id === id);
+      
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        cart.push({ id, name, price, quantity: 1 });
+      }
+      
+      updateCart();
+      openCart();
+    }
+
+    function updateQuantity(id, change) {
+      const item = cart.find(item => item.id === id);
+      
+      if (item) {
+        item.quantity += change;
+        
+        if (item.quantity <= 0) {
+          cart = cart.filter(item => item.id !== id);
+        }
+        
+        updateCart();
+      }
+    }
+
+    function updateCart() {
+      const cartItemsContainer = document.getElementById('cartItems');
+      const totalAmount = document.getElementById('totalAmount');
+      
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+          <div class="empty-cart">
+            <p>Your cart is empty</p>
+          </div>
+        `;
+      } else {
+        cartItemsContainer.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+            </div>
+            <div class="quantity-controls">
+              <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
+              <span class="quantity">${item.quantity}</span>
+              <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      totalAmount.textContent = `$${total.toFixed(2)}`;
+    }
+
+    function openCart() {
+      document.getElementById('cartSidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('active');
+    }
+
+    function closeCart() {
+      document.getElementById('cartSidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('active');
+    }
+
+    // Event listeners
+    document.getElementById('closeCart').addEventListener('click', closeCart);
+    document.getElementById('overlay').addEventListener('click', closeCart);
+
+    // Load products on page load
+    loadProducts();
+  </script>
+</body>
+</html>
