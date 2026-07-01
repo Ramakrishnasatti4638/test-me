@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            display: flex;
+            background: #e0e0e0;
+            position: relative;
+        }
+
+        .progress-step {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .progress-step.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .progress-step.completed {
+            background: #45a049;
+            color: white;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .cart-items {
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-control input {
+            width: 60px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .item-total {
+            font-weight: 600;
+            color: #4CAF50;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .subtotal {
+            text-align: right;
+            padding: 20px;
+            border-top: 2px solid #ddd;
+            margin-top: 20px;
+        }
+
+        .subtotal-label {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .subtotal-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #4CAF50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        input.error {
+            border-color: #f44336;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .order-summary {
+            background: #fafafa;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .order-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .summary-section {
+            margin-bottom: 25px;
+        }
+
+        .summary-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
+        }
+
+        .summary-content {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .summary-items {
+            list-style: none;
+        }
+
+        .summary-items li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .summary-items li:last-child {
+            border-bottom: none;
+        }
+
+        .success-icon {
+            text-align: center;
+            font-size: 64px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step" data-step="1">Step 1: Cart</div>
+            <div class="progress-step" data-step="2">Step 2: Shipping</div>
+            <div class="progress-step" data-step="3">Step 3: Confirmation</div>
+        </div>
+
+        <div class="content">
+            <!-- Step 1: Cart Review -->
+            <div class="step active" id="step1">
+                <h1>Review Your Cart</h1>
+                <div class="cart-items" id="cartItems">
+                    <div class="loading">Loading cart...</div>
+                </div>
+                <div class="subtotal">
+                    <div class="subtotal-label">Subtotal:</div>
+                    <div class="subtotal-amount" id="subtotal">$0.00</div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="goToStep(2)">Continue to Shipping</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Shipping Form -->
+            <div class="step" id="step2">
+                <h1>Shipping Information</h1>
+                <form id="shippingForm">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                        <div class="error-message" id="nameError">Please enter your full name</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address *</label>
+                        <input type="text" id="address" name="address" required>
+                        <div class="error-message" id="addressError">Please enter your address</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" name="city" required>
+                        <div class="error-message" id="cityError">Please enter your city</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip">ZIP Code *</label>
+                        <input type="text" id="zip" name="zip" required pattern="[0-9]{5}">
+                        <div class="error-message" id="zipError">Please enter a valid 5-digit ZIP code</div>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn-secondary" onclick="goToStep(1)">Back to Cart</button>
+                        <button type="submit" class="btn-primary">Complete Order</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 3: Order Confirmation -->
+            <div class="step" id="step3">
+                <div class="success-icon">✓</div>
+                <h1>Order Confirmed!</h1>
+                <div class="order-summary">
+                    <div class="order-number" id="orderNumber">Loading...</div>
+                    
+                    <div class="summary-section">
+                        <div class="summary-title">Shipping To:</div>
+                        <div class="summary-content" id="shippingSummary"></div>
+                    </div>
+                    
+                    <div class="summary-section">
+                        <div class="summary-title">Items Ordered:</div>
+                        <ul class="summary-items" id="itemsSummary"></ul>
+                    </div>
+                    
+                    <div class="subtotal">
+                        <div class="subtotal-label">Total:</div>
+                        <div class="subtotal-amount" id="finalTotal">$0.00</div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="window.location.href='checkout.html'">Start New Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let cartData = null;
+
+        // Load cart data
+        async function loadCart() {
+            try {
+                const response = await fetch(`${API_URL}/api/cart`);
+                cartData = await response.json();
+                renderCart();
+            } catch (error) {
+                console.error('Error loading cart:', error);
+                document.getElementById('cartItems').innerHTML = '<div class="loading">Error loading cart</div>';
+            }
+        }
+
+        // Render cart items
+        function renderCart() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            cartItemsDiv.innerHTML = '';
+
+            cartData.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">$${item.price.toFixed(2)} each</div>
+                    </div>
+                    <div class="item-controls">
+                        <div class="quantity-control">
+                            <label>Qty:</label>
+                            <input type="number" min="1" max="99" value="${item.quantity}" 
+                                   onchange="updateQuantity(${item.id}, this.value)">
+                        </div>
+                        <div class="item-total">$${(item.price * item.quantity).toFixed(2)}</div>
+                    </div>
+                `;
+                cartItemsDiv.appendChild(itemDiv);
+            });
+
+            document.getElementById('subtotal').textContent = `$${cartData.subtotal.toFixed(2)}`;
+        }
+
+        // Update item quantity
+        async function updateQuantity(itemId, quantity) {
+            try {
+                const response = await fetch(`${API_URL}/api/cart/${itemId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantity: parseInt(quantity) })
+                });
+                cartData = await response.json();
+                renderCart();
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+            }
+        }
+
+        // Navigate to step
+        function goToStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            
+            // Show current step
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            
+            // Update progress bar
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < stepNumber) {
+                    step.classList.add('completed');
+                } else if (index + 1 === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        // Validate field
+        function validateField(fieldId, errorId, validationFn) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            const isValid = validationFn(field.value);
+            
+            if (isValid) {
+                field.classList.remove('error');
+                error.classList.remove('show');
+            } else {
+                field.classList.add('error');
+                error.classList.add('show');
+            }
+            
+            return isValid;
+        }
+
+        // Add real-time validation
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameField = document.getElementById('name');
+            const addressField = document.getElementById('address');
+            const cityField = document.getElementById('city');
+            const zipField = document.getElementById('zip');
+
+            nameField.addEventListener('blur', () => {
+                validateField('name', 'nameError', val => val.trim().length > 0);
+            });
+
+            addressField.addEventListener('blur', () => {
+                validateField('address', 'addressError', val => val.trim().length > 0);
+            });
+
+            cityField.addEventListener('blur', () => {
+                validateField('city', 'cityError', val => val.trim().length > 0);
+            });
+
+            zipField.addEventListener('blur', () => {
+                validateField('zip', 'zipError', val => /^[0-9]{5}$/.test(val));
+            });
+        });
+
+        // Handle shipping form submission
+        document.getElementById('shippingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate all fields
+            const nameValid = validateField('name', 'nameError', val => val.trim().length > 0);
+            const addressValid = validateField('address', 'addressError', val => val.trim().length > 0);
+            const cityValid = validateField('city', 'cityError', val => val.trim().length > 0);
+            const zipValid = validateField('zip', 'zipError', val => /^[0-9]{5}$/.test(val));
+
+            if (!nameValid || !addressValid || !cityValid || !zipValid) {
+                return;
+            }
+
+            const formData = {
+                name: document.getElementById('name').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                zip: document.getElementById('zip').value
+            };
+
+            try {
+                // Submit shipping info
+                await fetch(`${API_URL}/api/shipping`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                // Create order
+                const orderResponse = await fetch(`${API_URL}/api/order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const order = await orderResponse.json();
+
+                // Display confirmation
+                displayOrderConfirmation(order);
+                goToStep(3);
+            } catch (error) {
+                console.error('Error submitting order:', error);
+                alert('Error submitting order. Please try again.');
+            }
+        });
+
+        // Display order confirmation
+        function displayOrderConfirmation(order) {
+            document.getElementById('orderNumber').textContent = order.orderNumber;
+            
+            document.getElementById('shippingSummary').innerHTML = `
+                ${order.shipping.name}<br>
+                ${order.shipping.address}<br>
+                ${order.shipping.city}, ${order.shipping.zip}
+            `;
+
+            const itemsList = document.getElementById('itemsSummary');
+            itemsList.innerHTML = '';
+            order.items.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${item.name} × ${item.quantity}</span>
+                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                itemsList.appendChild(li);
+            });
+
+            document.getElementById('finalTotal').textContent = `$${order.subtotal.toFixed(2)}`;
+        }
+
+        // Load cart on page load
+        loadCart();
+    </script>
+</body>
+</html>
