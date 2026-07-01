@@ -1,12 +1,14 @@
 {
-  "name": "notes-app-frontend",
+  "name": "product-listing-app",
   "version": "1.0.0",
-  "description": "Notes app frontend",
+  "description": "Product listing with shopping cart",
   "scripts": {
+    "start": "node server.js",
     "dev": "vite",
     "build": "vite build"
   },
   "dependencies": {
+    "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
