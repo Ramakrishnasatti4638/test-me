@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --primary: #1d1d1f;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --muted: #6e6e73;
+      --border: #d2d2d7;
+      --danger: #ff3b30;
+      --sidebar-w: 380px;
+      --radius: 14px;
+      --shadow: 0 4px 24px rgba(0,0,0,.10);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: rgba(255,255,255,.82);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -.3px;
+    }
+
+    /* ── Cart toggle button ── */
+    #cart-btn {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      transition: background .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    #cart-btn:hover { background: rgba(0,113,227,.08); }
+
+    #cart-btn svg { width: 26px; height: 26px; }
+
+    #cart-count {
+      position: absolute;
+      top: 0; right: 0;
+      background: var(--accent);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 700;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transform: translate(4px, -4px);
+      opacity: 0;
+      transition: opacity .2s, transform .2s;
+    }
+    #cart-count.visible {
+      opacity: 1;
+      transform: translate(4px, -4px) scale(1);
+    }
+
+    /* ── Product grid ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    main h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+      letter-spacing: -.4px;
+    }
+
+    #product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    /* ── Product card ── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.13);
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      user-select: none;
+    }
+
+    .card-body {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -.2px;
+    }
+
+    .card-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+
+    .card-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+    .btn-add:hover  { background: var(--accent-hover); }
+    .btn-add:active { transform: scale(.96); }
+
+    /* ── Overlay ── */
+    #overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+    #overlay.show { opacity: 1; pointer-events: all; }
+
+    /* ── Cart sidebar ── */
+    #cart-sidebar {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--surface);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -4px 0 32px rgba(0,0,0,.14);
+      transform: translateX(100%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    #cart-sidebar.open { transform: translateX(0); }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 { font-size: 1.1rem; font-weight: 700; }
+
+    #close-cart {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      transition: color .15s, background .15s;
+    }
+    #close-cart:hover { color: var(--primary); background: var(--bg); }
+    #close-cart svg { width: 22px; height: 22px; }
+
+    /* ── Cart items list ── */
+    #cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--muted);
+      font-size: .9rem;
+      margin-top: 60px;
+    }
+    .empty-msg span { font-size: 2.5rem; display: block; margin-bottom: 12px; }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 12px;
+      animation: slideIn .22s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .ci-emoji {
+      font-size: 2rem;
+      flex-shrink: 0;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .ci-info { flex: 1; min-width: 0; }
+    .ci-name {
+      font-size: .9rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ci-price { font-size: .8rem; color: var(--muted); margin-top: 2px; }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .qty-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, border-color .15s;
+      color: var(--primary);
+    }
+    .qty-btn:hover { background: var(--border); }
+    .qty-btn.minus:hover { background: #ffe5e5; border-color: var(--danger); color: var(--danger); }
+
+    .qty-num {
+      min-width: 22px;
+      text-align: center;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    /* ── Cart footer ── */
+    .sidebar-footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .total-row span:last-child { font-size: 1.25rem; }
+
+    #checkout-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+      width: 100%;
+    }
+    #checkout-btn:hover { background: var(--accent-hover); }
+    #checkout-btn:disabled { background: var(--border); color: var(--muted); cursor: default; }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      :root { --sidebar-w: 100vw; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <h1>🛍 Storefront</h1>
+  <button id="cart-btn" aria-label="Open cart">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+    </svg>
+    <span id="cart-count">0</span>
+  </button>
+</header>
+
+<!-- ── Main product grid ── -->
+<main>
+  <h2>Featured Products</h2>
+  <div id="product-grid"></div>
+</main>
+
+<!-- ── Overlay ── -->
+<div id="overlay"></div>
+
+<!-- ── Cart sidebar ── -->
+<aside id="cart-sidebar" aria-label="Shopping cart">
+  <div class="sidebar-header">
+    <h2>Your Cart</h2>
+    <button id="close-cart" aria-label="Close cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="cart-items">
+    <!-- populated by JS -->
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="total-row">
+      <span>Total</span>
+      <span id="cart-total">$0.00</span>
+    </div>
+    <button id="checkout-btn" disabled>Checkout</button>
+  </div>
+</aside>
+
+<script>
+  // ── Products data ──────────────────────────────────────────────
+  const products = [
+    {
+      id: 1,
+      name: 'Wireless Headphones',
+      desc: 'Premium noise-cancelling audio with 30-hour battery life.',
+      price: 79.99,
+      emoji: '🎧',
+      gradA: '#e0f0ff',
+      gradB: '#b3d4f7',
+    },
+    {
+      id: 2,
+      name: 'Mechanical Keyboard',
+      desc: 'Tactile brown switches, RGB backlight, aluminum frame.',
+      price: 129.99,
+      emoji: '⌨️',
+      gradA: '#fff0e0',
+      gradB: '#ffd6a5',
+    },
+    {
+      id: 3,
+      name: 'Smart Watch',
+      desc: 'Health tracking, notifications, and 7-day battery.',
+      price: 199.99,
+      emoji: '⌚',
+      gradA: '#e8f5e9',
+      gradB: '#a5d6a7',
+    },
+    {
+      id: 4,
+      name: 'Portable Speaker',
+      desc: '360° surround sound, waterproof, up to 12 hours playback.',
+      price: 59.99,
+      emoji: '🔊',
+      gradA: '#fce4ec',
+      gradB: '#f48fb1',
+    },
+    {
+      id: 5,
+      name: 'USB-C Hub',
+      desc: '7-in-1 hub: HDMI 4K, 3× USB-A, SD card, 100W PD charging.',
+      price: 44.99,
+      emoji: '🔌',
+      gradA: '#ede7f6',
+      gradB: '#b39ddb',
+    },
+    {
+      id: 6,
+      name: 'Webcam HD',
+      desc: '1080p / 60fps, auto-focus, built-in noise-cancelling mic.',
+      price: 89.99,
+      emoji: '📷',
+      gradA: '#e0f7fa',
+      gradB: '#80deea',
+    },
+  ];
+
+  // ── State ─────────────────────────────────────────────────────
+  const cart = {}; // { [productId]: quantity }
+
+  // ── DOM refs ──────────────────────────────────────────────────
+  const grid        = document.getElementById('product-grid');
+  const sidebar     = document.getElementById('cart-sidebar');
+  const overlay     = document.getElementById('overlay');
+  const cartItems   = document.getElementById('cart-items');
+  const cartTotal   = document.getElementById('cart-total');
+  const cartCount   = document.getElementById('cart-count');
+  const checkoutBtn = document.getElementById('checkout-btn');
+  const cartBtn     = document.getElementById('cart-btn');
+  const closeCart   = document.getElementById('close-cart');
+
+  // ── Render products ───────────────────────────────────────────
+  products.forEach(p => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-img" style="--grad-a:${p.gradA};--grad-b:${p.gradB}">${p.emoji}</div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-footer">
+          <span class="card-price">$${p.price.toFixed(2)}</span>
+          <button class="btn-add" data-id="${p.id}">Add to Cart</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // ── Add to cart ───────────────────────────────────────────────
+  grid.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-add');
+    if (!btn) return;
+    const id = Number(btn.dataset.id);
+    cart[id] = (cart[id] || 0) + 1;
+    renderCart();
+    openSidebar();
+    // brief button feedback
+    btn.textContent = '✓ Added';
+    btn.style.background = '#34c759';
+    setTimeout(() => {
+      btn.textContent = 'Add to Cart';
+      btn.style.background = '';
+    }, 900);
+  });
+
+  // ── Cart open / close ─────────────────────────────────────────
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  cartBtn.addEventListener('click', openSidebar);
+  closeCart.addEventListener('click', closeSidebar);
+  overlay.addEventListener('click', closeSidebar);
+
+  // ── Render cart ───────────────────────────────────────────────
+  function renderCart() {
+    const ids = Object.keys(cart).filter(id => cart[id] > 0).map(Number);
+
+    // Update badge
+    const totalQty = ids.reduce((s, id) => s + cart[id], 0);
+    cartCount.textContent = totalQty;
+    cartCount.classList.toggle('visible', totalQty > 0);
+
+    // Update total
+    const total = ids.reduce((s, id) => {
+      const p = products.find(x => x.id === id);
+      return s + p.price * cart[id];
+    }, 0);
+    cartTotal.textContent = `$${total.toFixed(2)}`;
+    checkoutBtn.disabled = ids.length === 0;
+
+    // Render items
+    if (ids.length === 0) {
+      cartItems.innerHTML = `
+        <div class="empty-msg">
+          <span>🛒</span>
+          Your cart is empty.<br>Start adding some products!
+        </div>`;
+      return;
+    }
+
+    cartItems.innerHTML = ids.map(id => {
+      const p   = products.find(x => x.id === id);
+      const qty = cart[id];
+      return `
+        <div class="cart-item" data-id="${id}">
+          <div class="ci-emoji">${p.emoji}</div>
+          <div class="ci-info">
+            <div class="ci-name">${p.name}</div>
+            <div class="ci-price">$${p.price.toFixed(2)} each</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn minus" data-action="dec" data-id="${id}" aria-label="Remove one">−</button>
+            <span class="qty-num">${qty}</span>
+            <button class="qty-btn plus"  data-action="inc" data-id="${id}" aria-label="Add one">+</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Quantity controls (event delegation) ─────────────────────
+  cartItems.addEventListener('click', e => {
+    const btn = e.target.closest('.qty-btn');
+    if (!btn) return;
+    const id     = Number(btn.dataset.id);
+    const action = btn.dataset.action;
+
+    if (action === 'inc') {
+      cart[id] = (cart[id] || 0) + 1;
+    } else {
+      cart[id] = (cart[id] || 1) - 1;
+      if (cart[id] <= 0) delete cart[id];
+    }
+    renderCart();
+  });
+
+  // ── Checkout stub ─────────────────────────────────────────────
+  checkoutBtn.addEventListener('click', () => {
+    alert('Order placed! 🎉 Thank you for your purchase.');
+    Object.keys(cart).forEach(k => delete cart[k]);
+    renderCart();
+    closeSidebar();
+  });
+
+  // ── Initial render ────────────────────────────────────────────
+  renderCart();
+</script>
+</body>
+</html>
