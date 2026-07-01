@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Wizard</title>
+    <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Personal Info</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Account</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Preferences</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Review</div>
+            </div>
+        </div>
+
+        <div class="wizard-content">
+            <!-- Step 1: Personal Info -->
+            <div class="step-content active" id="step1">
+                <h2>Personal Information</h2>
+                <form id="personalForm" novalidate>
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth *</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                        <span class="error-message"></span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Account Setup -->
+            <div class="step-content" id="step2">
+                <h2>Account Setup</h2>
+                <form id="accountForm" novalidate>
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input type="text" id="username" name="username" required>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" id="password" name="password" required>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password *</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <span class="error-message"></span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 3: Preferences -->
+            <div class="step-content" id="step3">
+                <h2>Preferences</h2>
+                <form id="preferencesForm">
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            <span>Subscribe to newsletter</span>
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="notifications" name="notifications">
+                            <span>Enable notifications</span>
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="darkMode" name="darkMode">
+                            <span>Enable dark mode</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 4: Review -->
+            <div class="step-content" id="step4">
+                <h2>Review Your Information</h2>
+                <div class="review-section">
+                    <div class="review-header">
+                        <h3>Personal Information</h3>
+                        <button class="edit-btn" data-step="1">Edit</button>
+                    </div>
+                    <div class="review-content">
+                        <p><strong>First Name:</strong> <span id="reviewFirstName"></span></p>
+                        <p><strong>Last Name:</strong> <span id="reviewLastName"></span></p>
+                        <p><strong>Date of Birth:</strong> <span id="reviewDateOfBirth"></span></p>
+                    </div>
+                </div>
+                
+                <div class="review-section">
+                    <div class="review-header">
+                        <h3>Account Setup</h3>
+                        <button class="edit-btn" data-step="2">Edit</button>
+                    </div>
+                    <div class="review-content">
+                        <p><strong>Username:</strong> <span id="reviewUsername"></span></p>
+                        <p><strong>Password:</strong> <span id="reviewPassword">••••••••</span></p>
+                    </div>
+                </div>
+                
+                <div class="review-section">
+                    <div class="review-header">
+                        <h3>Preferences</h3>
+                        <button class="edit-btn" data-step="3">Edit</button>
+                    </div>
+                    <div class="review-content">
+                        <p><strong>Newsletter:</strong> <span id="reviewNewsletter"></span></p>
+                        <p><strong>Notifications:</strong> <span id="reviewNotifications"></span></p>
+                        <p><strong>Dark Mode:</strong> <span id="reviewDarkMode"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-navigation">
+            <button id="backBtn" class="btn btn-secondary" style="display: none;">Back</button>
+            <button id="nextBtn" class="btn btn-primary">Next</button>
+            <button id="submitBtn" class="btn btn-success" style="display: none;">Complete Onboarding</button>
+        </div>
+
+        <div id="successMessage" class="success-message" style="display: none;">
+            <h3>✓ Onboarding Complete!</h3>
+            <p>Your account has been successfully created.</p>
+        </div>
+    </div>
+
+    <script src="onboarding.js"></script>
+</body>
+</html>
