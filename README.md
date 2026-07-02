@@ -1,4 +1,46 @@
-# Notes App Frontend
+# Notes App & Shop Frontend
+
+A single repo with two frontends:
+
+1. **Notes App** — a React + Vite note-taking app.
+2. **Shop** — a vanilla HTML/CSS/JS product listing page with a sliding cart sidebar.
+
+## Shop (new)
+
+A 6-product catalog backed by the Express API in
+[`api_db`](https://github.com/Ramakrishnasatti4638/api_db). Clicking **Add to Cart**
+slides a cart sidebar in from the right with per-item `+` / `−` quantity controls
+and a running total.
+
+### Run locally
+
+The static page can be served with any HTTP server, e.g.:
+
+```bash
+# from the repo root
+python3 -m http.server 5500
+# then open http://localhost:5500/products.html
+```
+
+The backend (`api_db`) must be running on `http://localhost:3001`.
+
+### Files
+
+- `products.html` — markup
+- `style.css` — styles (header, product grid, sliding cart sidebar)
+- `app.js` — fetches products/cart, renders UI, handles sidebar & quantity controls
+
+### Features
+
+- 6 products fetched from `GET /api/products`
+- "Add to Cart" posts to `POST /api/cart`, cart sidebar slides in automatically
+- Per-item `+` / `−` quantity controls backed by `PUT /api/cart/:productId`
+- Per-item `×` remove button backed by `DELETE /api/cart/:productId`
+- Cart count badge and running total update on every change
+- Backdrop + `Escape` key close the sidebar
+- Fully responsive (full-screen sidebar on mobile)
+
+## Notes App
 
 Modern note-taking web application built with React and Vite.
 
