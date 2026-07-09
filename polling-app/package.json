@@ -1,0 +1,20 @@
+{
+  "name": "polling-app",
+  "version": "1.0.0",
+  "description": "Full-stack polling application with Express and in-memory storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "jest --forceExit --runInBand"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
+  }
+}
