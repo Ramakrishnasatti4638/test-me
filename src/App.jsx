@@ -1,134 +1,155 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-const API_URL = 'http://localhost:3001/api/notes';
+const STORAGE_KEY = 'url-shortener-links';
+
+function loadLinks() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function isValidUrl(str) {
+  try {
+    const url = new URL(str);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function generateCode() {
+  const chars = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
 
 function App() {
-  const [notes, setNotes] = useState([]);
-  const [selectedNote, setSelectedNote] = useState(null);
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+  const [links, setLinks] = useState(loadLinks);
+  const [url, setUrl] = useState('');
+  const [customCode, setCustomCode] = useState('');
+  const [error, setError] = useState('');
+  const [copied, setCopied] = useState(null);
 
   useEffect(() => {
-    fetchNotes();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+  }, [links]);
+
+  // Redirect if visiting #/abc123 style hash
+  useEffect(() => {
+    const code = window.location.hash.replace(/^#\//, '');
+    if (code) {
+      const match = loadLinks().find(l => l.code === code);
+      if (match) {
+        window.location.replace(match.url);
+      }
+    }
   }, []);
 
-  const fetchNotes = async () => {
-    try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      setNotes(data);
-    } catch (error) {
-      console.error('Error fetching notes:', error);
-    }
-  };
+  const shorten = (e) => {
+    e.preventDefault();
+    setError('');
 
-  const createNote = async () => {
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title || 'Untitled', body })
-      });
-      const newNote = await response.json();
-      setNotes([newNote, ...notes]);
-      setSelectedNote(newNote);
-      setTitle(newNote.title);
-      setBody(newNote.body);
-      setIsCreating(false);
-    } catch (error) {
-      console.error('Error creating note:', error);
-    }
-  };
+    const trimmed = url.trim();
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 
-  const deleteNote = async (id) => {
-    try {
-      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-      setNotes(notes.filter(note => note.id !== id));
-      if (selectedNote?.id === id) {
-        setSelectedNote(null);
-        setTitle('');
-        setBody('');
+    if (!isValidUrl(normalized)) {
+      setError('Please enter a valid URL.');
+      return;
+    }
+
+    let code = customCode.trim();
+    if (code) {
+      if (!/^[a-zA-Z0-9_-]{3,20}$/.test(code)) {
+        setError('Custom code must be 3-20 characters (letters, numbers, -, _).');
+        return;
       }
-    } catch (error) {
-      console.error('Error deleting note:', error);
+      if (links.some(l => l.code === code)) {
+        setError('That code is already taken.');
+        return;
+      }
+    } else {
+      do {
+        code = generateCode();
+      } while (links.some(l => l.code === code));
+    }
+
+    setLinks([{ url: normalized, code, createdAt: Date.now() }, ...links]);
+    setUrl('');
+    setCustomCode('');
+  };
+
+  const shortUrl = (code) =>
+    `${window.location.origin}${window.location.pathname}#/${code}`;
+
+  const copy = async (code) => {
+    try {
+      await navigator.clipboard.writeText(shortUrl(code));
+      setCopied(code);
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      setError('Could not copy to clipboard.');
     }
   };
 
-  const selectNote = (note) => {
-    setSelectedNote(note);
-    setTitle(note.title);
-    setBody(note.body);
-    setIsCreating(false);
-  };
-
-  const startNewNote = () => {
-    setIsCreating(true);
-    setSelectedNote(null);
-    setTitle('');
-    setBody('');
+  const remove = (code) => {
+    setLinks(links.filter(l => l.code !== code));
   };
 
   return (
-    <div className="app">
-      <div className="sidebar">
-        <div className="sidebar-header">
-          <h1>Notes</h1>
-          <button onClick={startNewNote} className="new-note-btn">+ New Note</button>
-        </div>
-        <div className="notes-list">
-          {notes.map(note => (
-            <div
-              key={note.id}
-              className={`note-item ${selectedNote?.id === note.id ? 'active' : ''}`}
-              onClick={() => selectNote(note)}
-            >
-              <div className="note-item-header">
-                <h3>{note.title}</h3>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNote(note.id);
-                  }}
-                  className="delete-btn"
-                >
-                  ×
-                </button>
+    <div className="shortener">
+      <header className="shortener-header">
+        <h1>🔗 URL Shortener</h1>
+        <p>Paste a long URL, get a short one. Optionally pick your own code.</p>
+      </header>
+
+      <form className="shortener-form" onSubmit={shorten}>
+        <input
+          type="text"
+          placeholder="https://example.com/very/long/url..."
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          className="url-input"
+        />
+        <input
+          type="text"
+          placeholder="Custom code (optional)"
+          value={customCode}
+          onChange={(e) => setCustomCode(e.target.value)}
+          className="code-input"
+        />
+        <button type="submit" className="shorten-btn">Shorten</button>
+      </form>
+
+      {error && <p className="error">{error}</p>}
+
+      {links.length === 0 ? (
+        <p className="empty">No links yet. Shorten your first URL above!</p>
+      ) : (
+        <ul className="links-list">
+          {links.map(({ code, url: original, createdAt }) => (
+            <li key={code} className="link-item">
+              <div className="link-details">
+                <a href={`#/${code}`} className="short-link" onClick={(e) => { e.preventDefault(); copy(code); }}>
+                  {copied === code ? '✓ Copied!' : shortUrl(code)}
+                </a>
+                <span className="original-url">{original}</span>
+                <span className="link-date">{new Date(createdAt).toLocaleString()}</span>
               </div>
-              <p>{note.body.substring(0, 50)}{note.body.length > 50 ? '...' : ''}</p>
-            </div>
+              <div className="link-actions">
+                <button onClick={() => copy(code)} className="copy-btn">Copy</button>
+                <a href={original} target="_blank" rel="noopener noreferrer" className="open-btn">Open</a>
+                <button onClick={() => remove(code)} className="delete-btn">Delete</button>
+              </div>
+            </li>
           ))}
-        </div>
-      </div>
-      <div className="editor">
-        {(selectedNote || isCreating) ? (
-          <>
-            <input
-              type="text"
-              placeholder="Note title..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="title-input"
-            />
-            <textarea
-              placeholder="Start typing your note..."
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              className="body-input"
-            />
-            {isCreating && (
-              <button onClick={createNote} className="save-btn">
-                Save Note
-              </button>
-            )}
-          </>
-        ) : (
-          <div className="empty-state">
-            <p>Select a note or create a new one</p>
-          </div>
-        )}
-      </div>
+        </ul>
+      )}
     </div>
   );
 }
