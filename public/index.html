@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnipURL — URL Shortener</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        <span>SnipURL</span>
+      </div>
+      <p class="tagline">Shorten, share, and track your links</p>
+    </header>
+
+    <!-- Shorten Form -->
+    <main class="main">
+      <section class="card shorten-card">
+        <h2>Shorten a URL</h2>
+        <form id="shortenForm" class="form">
+          <div class="input-row">
+            <input
+              id="urlInput"
+              type="url"
+              placeholder="https://example.com/your-long-url-here"
+              autocomplete="off"
+              required
+            />
+            <button type="submit" id="submitBtn">
+              <span class="btn-text">Shorten</span>
+              <span class="btn-spinner" hidden>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+              </span>
+            </button>
+          </div>
+          <div id="formError" class="error-msg" hidden></div>
+        </form>
+
+        <!-- Result -->
+        <div id="resultBox" class="result-box" hidden>
+          <div class="result-label">Your short link is ready!</div>
+          <div class="result-row">
+            <a id="shortLinkAnchor" href="#" target="_blank" class="short-link"></a>
+            <button id="copyBtn" class="copy-btn" title="Copy to clipboard">
+              <svg id="copyIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span id="copyLabel">Copy</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Links Table -->
+      <section class="card links-card">
+        <div class="links-header">
+          <h2>Recent Links</h2>
+          <button id="refreshBtn" class="icon-btn" title="Refresh">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </button>
+        </div>
+
+        <div id="linksContainer">
+          <div class="empty-state" id="emptyState">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            <p>No links yet. Shorten your first URL above!</p>
+          </div>
+          <div id="linksTableWrapper" hidden>
+            <table class="links-table">
+              <thead>
+                <tr>
+                  <th>Short Link</th>
+                  <th>Original URL</th>
+                  <th>Clicks</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="linksTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Built with Express &amp; Vanilla JS &nbsp;·&nbsp; Links are stored in-memory</p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
