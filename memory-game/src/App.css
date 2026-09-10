@@ -1,0 +1,278 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --card-back: #16213e;
+  --card-front: #e94560;
+  --accent: #e94560;
+  --accent2: #0f3460;
+  --text: #eaeaea;
+  --muted: #888;
+  --match: #22c55e;
+  --radius: 14px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 28px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #e94560, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Difficulty ── */
+.difficulty-bar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.diff-btn {
+  padding: 6px 18px;
+  border-radius: 50px;
+  border: 2px solid #333;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.diff-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.diff-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Stats ── */
+.stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stat {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  text-align: center;
+  min-width: 90px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* ── Card ── */
+.card {
+  aspect-ratio: 1;
+  perspective: 600px;
+  cursor: pointer;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius);
+}
+
+.card.flipped .card-inner,
+.card.matched .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-front {
+  background: var(--card-back);
+  border: 2px solid #252540;
+  font-size: 1.6rem;
+  color: #333;
+  font-weight: 900;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.card:not(.flipped):not(.matched):hover .card-front {
+  background: #1e1e38;
+  border-color: var(--accent);
+}
+
+.card-back {
+  background: var(--accent2);
+  border: 2px solid #1a3a6e;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  transform: rotateY(180deg);
+}
+
+.card.matched .card-back {
+  background: #14532d;
+  border-color: var(--match);
+  animation: pop 0.35s ease;
+}
+
+@keyframes pop {
+  0%   { transform: rotateY(180deg) scale(1); }
+  50%  { transform: rotateY(180deg) scale(1.12); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+/* ── Restart button ── */
+.restart-btn {
+  padding: 12px 32px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, #e94560, #a855f7);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.restart-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.restart-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Win modal ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.win-modal {
+  background: var(--surface);
+  border: 1px solid #2a2a4a;
+  border-radius: 24px;
+  padding: 40px 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.win-emoji {
+  font-size: 3.5rem;
+  animation: bounce 0.6s ease infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-8px); }
+}
+
+.win-modal h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #e94560, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.win-modal p {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.win-rating {
+  font-size: 1.1rem !important;
+  color: var(--text) !important;
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 420px) {
+  .stats { gap: 10px; }
+  .stat { padding: 10px 14px; min-width: 70px; }
+  .grid { gap: 8px; }
+}
