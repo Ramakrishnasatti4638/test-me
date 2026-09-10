@@ -1,0 +1,173 @@
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #f0f4ff;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+/* ── App shell ── */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── Header ── */
+.header {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #fff;
+  padding: 2rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(99,102,241,.35);
+}
+.header-inner { display: inline-flex; flex-direction: column; align-items: center; gap: .4rem; }
+.logo { font-size: 2.5rem; }
+.title { font-size: 2rem; font-weight: 700; letter-spacing: -.5px; }
+.subtitle { font-size: .95rem; opacity: .85; }
+
+/* ── Container ── */
+.container {
+  max-width: 600px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Task Input ── */
+.task-input {
+  display: flex;
+  gap: .5rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: .75rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+.task-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #1e293b;
+  background: transparent;
+}
+.task-input input::placeholder { color: #94a3b8; }
+.task-input button {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: .5rem 1.25rem;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.task-input button:hover { background: #4f46e5; }
+
+/* ── Filter Bar ── */
+.filter-bar { display: flex; gap: .5rem; }
+.filter-btn {
+  flex: 1;
+  padding: .45rem .75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  color: #64748b;
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.filter-btn:hover { border-color: #6366f1; color: #6366f1; }
+.filter-btn.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #fff;
+}
+
+/* ── Task List ── */
+.task-list { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: .85rem 1rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  transition: transform .15s, box-shadow .15s;
+}
+.task-item:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.1); }
+.task-item.done .task-text { text-decoration: line-through; color: #94a3b8; }
+
+.check-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+.task-text { flex: 1; font-size: .975rem; }
+.delete-btn {
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: .2rem .4rem;
+  border-radius: 6px;
+  transition: color .15s, background .15s;
+}
+.delete-btn:hover { color: #ef4444; background: #fef2f2; }
+
+/* ── Empty state ── */
+.empty { text-align: center; color: #94a3b8; padding: 2rem; font-size: .95rem; }
+
+/* ── Stats ── */
+.stats {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.stats-bar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.stats-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+.stats-row {
+  display: flex;
+  align-items: center;
+  font-size: .85rem;
+  color: #64748b;
+  gap: 1rem;
+}
+.stats-row span:first-child { font-weight: 600; }
+.stats-row span:nth-child(2) { margin-right: auto; }
+.clear-btn {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: .85rem;
+  cursor: pointer;
+  font-weight: 600;
+  padding: .25rem .5rem;
+  border-radius: 6px;
+  transition: background .15s;
+}
+.clear-btn:hover { background: #eef2ff; }
