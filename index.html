@@ -192,7 +192,7 @@
         Remember me for 30 days
       </label>
 
-      <button type="submit">Sign in</button>
+      <button type="button" id="submitBtn">Sign in</button>
     </form>
 
     <div class="divider">or</div>
@@ -201,8 +201,7 @@
   </div>
 
   <script>
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+    document.getElementById("submitBtn").addEventListener("click", function () {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
