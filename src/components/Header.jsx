@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './Header.css'
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(true)
 
   return (
     <header className="header">
@@ -12,7 +12,7 @@ export default function Header() {
           <span className="logo-text">ReactApp</span>
         </div>
 
-        <nav className={`nav ${menuOpen ? 'nav--open' : ''}`}>
+        <nav className={`nav ${menuOpen ? 'nav--open' : 'nav--closed'}`}>
           <a href="#features">Features</a>
           <a href="#counter">Demo</a>
           <a href="#footer">Contact</a>

@@ -58,7 +58,7 @@
 }
 
 .hamburger {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 5px;
   background: none;
@@ -76,9 +76,18 @@
   transition: 0.2s;
 }
 
-@media (max-width: 640px) {
-  .hamburger { display: flex; }
+/* Desktop: nav is visible by default; hamburger hides it when toggled */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
 
+.nav--closed {
+  display: none;
+}
+
+@media (max-width: 640px) {
   .nav {
     display: none;
     flex-direction: column;
