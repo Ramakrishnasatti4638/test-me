@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import StatsGrid from './components/StatsGrid'
 import TaskList from './components/TaskList'
@@ -7,8 +7,12 @@ import './App.css'
 export default function App() {
   const [darkMode, setDarkMode] = useState(false)
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode)
+  }, [darkMode])
+
   return (
-    <div className={`app ${darkMode ? 'dark' : ''}`}>
+    <div className="app">
       <Header darkMode={darkMode} onToggle={() => setDarkMode(d => !d)} />
       <main className="main">
         <section className="welcome">

@@ -46,16 +46,17 @@ export default function TaskList() {
       <form className="task-form" onSubmit={add}>
         <input
           className="task-input"
+          data-testid="task-input"
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Add a new task…"
         />
-        <button className="task-add-btn" type="submit">Add</button>
+        <button className="task-add-btn" data-testid="task-add-btn" type="submit">Add</button>
       </form>
 
-      <ul className="task-list">
+      <ul className="task-list" data-testid="task-list">
         {tasks.map(task => (
-          <li key={task.id} className={`task-item ${task.done ? 'done' : ''}`}>
+          <li key={task.id} className={`task-item ${task.done ? 'done' : ''}`} data-testid="task-item">
             <input
               type="checkbox"
               checked={task.done}
