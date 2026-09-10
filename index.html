@@ -101,7 +101,7 @@
       cursor: pointer;
     }
 
-    button[type="submit"] {
+    button#submitBtn {
       width: 100%;
       padding: 12px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -114,12 +114,36 @@
       transition: opacity 0.2s, transform 0.1s;
     }
 
-    button[type="submit"]:hover {
+    button#submitBtn:hover {
       opacity: 0.92;
     }
 
-    button[type="submit"]:active {
+    button#submitBtn:active {
       transform: scale(0.98);
+    }
+
+    .alert-msg {
+      display: none;
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .alert-msg.error {
+      display: block;
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    .alert-msg.success {
+      display: block;
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #86efac;
     }
 
     .divider {
@@ -192,6 +216,7 @@
         Remember me for 30 days
       </label>
 
+      <div id="alertMsg" class="alert-msg" role="alert"></div>
       <button type="button" id="submitBtn">Sign in</button>
     </form>
 
@@ -204,15 +229,16 @@
     document.getElementById("submitBtn").addEventListener("click", function () {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
+      const msg = document.getElementById("alertMsg");
 
       if (!email || !password) {
-        alert("Please fill in all fields.");
+        msg.textContent = "Please fill in all fields.";
+        msg.className = "alert-msg error";
         return;
       }
 
-      // Replace this block with your actual authentication logic
-      console.log("Login attempted:", { email });
-      alert("Login submitted! (wire up your auth logic here)");
+      msg.textContent = "Login submitted! (wire up your auth logic here)";
+      msg.className = "alert-msg success";
     });
   </script>
 </body>
