@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input[type="url"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="url"]::placeholder {
+            color: #999;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffe6e6;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success {
+            color: #27ae60;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e6ffe6;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        .urls-list {
+            margin-top: 40px;
+        }
+
+        .urls-list h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .url-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .url-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .url-text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .url-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .short-url {
+            font-weight: 600;
+            color: #667eea;
+            word-break: break-all;
+            margin-bottom: 5px;
+        }
+
+        .original-url {
+            color: #666;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        .url-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .copy-btn {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .url-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .url-stats {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔗 URL Shortener</h1>
+            <p class="subtitle">Create short, shareable links</p>
+
+            <div class="input-group">
+                <input
+                    type="url"
+                    id="urlInput"
+                    placeholder="Enter your long URL here..."
+                    autofocus
+                />
+                <button id="shortenBtn">Shorten</button>
+            </div>
+
+            <div id="error" class="error"></div>
+            <div id="success" class="success"></div>
+
+            <div class="urls-list">
+                <h2>Your Short URLs</h2>
+                <div id="urlsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const shortenBtn = document.getElementById('shortenBtn');
+        const errorEl = document.getElementById('error');
+        const successEl = document.getElementById('success');
+        const urlsList = document.getElementById('urlsList');
+
+        // Load URLs on page load
+        loadUrls();
+
+        // Event listeners
+        shortenBtn.addEventListener('click', shortenUrl);
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') shortenUrl();
+        });
+
+        async function shortenUrl() {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            shortenBtn.disabled = true;
+            errorEl.classList.remove('show');
+            successEl.classList.remove('show');
+
+            try {
+                const response = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to shorten URL');
+                }
+
+                const data = await response.json();
+                showSuccess(`Short URL created: ${data.shortUrl}`);
+                urlInput.value = '';
+                loadUrls();
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                shortenBtn.disabled = false;
+                urlInput.focus();
+            }
+        }
+
+        async function loadUrls() {
+            try {
+                const response = await fetch('/api/urls');
+                const urls = await response.json();
+
+                if (urls.length === 0) {
+                    urlsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div>No URLs yet. Create one above!</div>';
+                    return;
+                }
+
+                urlsList.innerHTML = urls.map(url => `
+                    <div class="url-item">
+                        <div class="url-info">
+                            <div class="url-text">
+                                <div class="url-label">Short URL</div>
+                                <div class="short-url">/${url.id}</div>
+                                <div class="url-label">Original URL</div>
+                                <div class="original-url">${escapeHtml(url.original_url)}</div>
+                            </div>
+                            <div class="url-stats">
+                                <div class="stat">
+                                    <div class="stat-value">${url.click_count || 0}</div>
+                                    <div class="stat-label">Clicks</div>
+                                </div>
+                                <button class="copy-btn" onclick="copyToClipboard('${url.id}')">Copy Link</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading URLs:', error);
+                urlsList.innerHTML = '<div class="empty-state">Error loading URLs</div>';
+            }
+        }
+
+        function copyToClipboard(shortId) {
+            const text = `http://localhost:3000/${shortId}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showSuccess('Link copied to clipboard!');
+            }).catch(() => {
+                showError('Failed to copy link');
+            });
+        }
+
+        function showError(message) {
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        }
+
+        function showSuccess(message) {
+            successEl.textContent = message;
+            successEl.classList.add('show');
+            setTimeout(() => successEl.classList.remove('show'), 5000);
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Refresh URLs every 5 seconds
+        setInterval(loadUrls, 5000);
+    </script>
+</body>
+</html>
