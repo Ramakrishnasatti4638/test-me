@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import './UrlList.css';
 
-function UrlList({ urls }) {
+function UrlList({ urls, onUrlClicked }) {
   const [copiedId, setCopiedId] = useState(null);
 
   const handleCopy = (shortUrl, shortId) => {
     navigator.clipboard.writeText(shortUrl);
     setCopiedId(shortId);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleShortUrlClick = (e, shortId) => {
+    e.preventDefault();
+    // Track the click and refresh after redirect happens
+    if (onUrlClicked) {
+      onUrlClicked(shortId);
+    }
   };
 
   if (urls.length === 0) {
@@ -32,12 +40,14 @@ function UrlList({ urls }) {
               <div className="url-pair">
                 <div className="url-field">
                   <label>Short URL</label>
-                  <input
-                    type="text"
-                    value={url.shortUrl}
-                    readOnly
-                    className="url-input"
-                  />
+                  <a
+                    href={url.shortUrl}
+                    className="short-url-link"
+                    title="Click to follow the short link"
+                    onClick={(e) => handleShortUrlClick(e, url.shortId)}
+                  >
+                    {url.shortUrl}
+                  </a>
                 </div>
                 <button
                   className="copy-button"

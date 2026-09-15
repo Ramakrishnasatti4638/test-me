@@ -46,6 +46,20 @@ function App() {
     }
   };
 
+  const handleUrlClicked = async (shortId) => {
+    // After a short URL is clicked and redirect happens,
+    // wait a moment then refresh to get updated click count
+    setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/urls/${shortId}`);
+        const updatedUrl = await response.json();
+        setUrls(urls.map(u => u.shortId === shortId ? updatedUrl : u));
+      } catch (error) {
+        console.error('Error refreshing URL data:', error);
+      }
+    }, 500);
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -54,7 +68,7 @@ function App() {
       </header>
       <main className="app-main">
         <UrlForm onAddUrl={handleAddUrl} loading={loading} />
-        <UrlList urls={urls} />
+        <UrlList urls={urls} onUrlClicked={handleUrlClicked} />
       </main>
     </div>
   );
