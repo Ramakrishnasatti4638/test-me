@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: #333;
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="url"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result-label {
+      color: #666;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .result-value {
+      word-break: break-all;
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 4px;
+      border-left: 3px solid #667eea;
+    }
+
+    .copy-btn {
+      width: 100%;
+      padding: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 10px;
+    }
+
+    .copy-btn:hover {
+      background: #5568d3;
+    }
+
+    .error {
+      color: #e74c3c;
+      padding: 12px;
+      background: #fadbd8;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .success {
+      color: #27ae60;
+      padding: 12px;
+      background: #d5f4e6;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .success.show {
+      display: block;
+    }
+
+    .stats {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .loading {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    button:disabled .loading {
+      opacity: 1;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔗 URL Shortener</h1>
+    <p class="subtitle">Create short, shareable links</p>
+
+    <div class="form-group">
+      <label for="longUrl">Enter your long URL:</label>
+      <input 
+        type="url" 
+        id="longUrl" 
+        placeholder="https://example.com/very/long/url"
+        required
+      >
+    </div>
+
+    <button id="shortenBtn" onclick="shortenUrl()">
+      <span class="loading">⏳</span> Shorten URL
+    </button>
+
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+
+    <div id="result" class="result">
+      <div class="result-label">Your Short URL</div>
+      <div id="shortUrlValue" class="result-value"></div>
+      <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+      <div class="stats">
+        <div><strong>Original URL:</strong></div>
+        <div id="statsOriginal" style="word-break: break-all; margin: 5px 0;"></div>
+        <div style="margin-top: 10px;"><strong>Clicks:</strong> <span id="statsClicks">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const longUrlInput = document.getElementById('longUrl');
+    const shortenBtn = document.getElementById('shortenBtn');
+    const resultDiv = document.getElementById('result');
+    const shortUrlValue = document.getElementById('shortUrlValue');
+    const errorDiv = document.getElementById('error');
+    const successDiv = document.getElementById('success');
+
+    longUrlInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') shortenUrl();
+    });
+
+    async function shortenUrl() {
+      const url = longUrlInput.value.trim();
+
+      if (!url) {
+        showError('Please enter a URL');
+        return;
+      }
+
+      shortenBtn.disabled = true;
+      errorDiv.classList.remove('show');
+      successDiv.classList.remove('show');
+
+      try {
+        const response = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError(data.error || 'Failed to shorten URL');
+          return;
+        }
+
+        showResult(data);
+      } catch (err) {
+        showError('Network error. Please try again.');
+      } finally {
+        shortenBtn.disabled = false;
+      }
+    }
+
+    function showResult(data) {
+      shortUrlValue.textContent = data.shortUrl;
+      document.getElementById('statsOriginal').textContent = data.longUrl;
+      document.getElementById('statsClicks').textContent = '0';
+
+      resultDiv.classList.add('show');
+      successDiv.classList.add('show');
+      successDiv.textContent = '✓ URL shortened successfully!';
+      errorDiv.classList.remove('show');
+    }
+
+    function showError(message) {
+      errorDiv.textContent = '✗ ' + message;
+      errorDiv.classList.add('show');
+      resultDiv.classList.remove('show');
+    }
+
+    function copyToClipboard() {
+      const shortUrl = shortUrlValue.textContent;
+      navigator.clipboard.writeText(shortUrl).then(() => {
+        const originalText = shortenBtn.textContent;
+        successDiv.textContent = '✓ Copied to clipboard!';
+        successDiv.classList.add('show');
+      }).catch(() => {
+        showError('Failed to copy to clipboard');
+      });
+    }
+  </script>
+</body>
+</html>
