@@ -44,13 +44,31 @@ form.addEventListener('submit', async (e) => {
 // Copy to clipboard
 copyBtn.addEventListener('click', async () => {
   try {
-    await navigator.clipboard.writeText(shortUrlDisplay.value);
+    const textToCopy = shortUrlDisplay.value;
+    if (!textToCopy) {
+      showError('No URL to copy');
+      return;
+    }
+    
+    // Try modern clipboard API first
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy);
+    } else {
+      // Fallback for non-secure contexts or older browsers
+      shortUrlDisplay.select();
+      document.execCommand('copy');
+    }
+    
     const originalText = copyBtn.textContent;
     copyBtn.textContent = '✓ Copied!';
+    copyBtn.classList.add('success');
+    
     setTimeout(() => {
       copyBtn.textContent = originalText;
+      copyBtn.classList.remove('success');
     }, 2000);
   } catch (error) {
+    console.error('Copy error:', error);
     showError('Failed to copy to clipboard');
   }
 });
@@ -89,7 +107,7 @@ async function loadUrls() {
       .map(item => {
         const createdDate = new Date(item.createdAt).toLocaleDateString();
         return `
-          <div class="url-item">
+          <div class="url-item" data-short-code="${item.shortCode}">
             <div class="url-item-header">
               <span class="short-code-badge">${item.shortCode}</span>
             </div>
@@ -127,3 +145,13 @@ urlInput.addEventListener('input', () => {
     hideError();
   }
 });
+
+// Refresh URL list when user returns from a redirect
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    loadUrls();
+  }
+});
+
+// Also refresh periodically to catch click count updates
+setInterval(loadUrls, 5000);
