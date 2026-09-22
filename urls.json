@@ -3,5 +3,15 @@
     "originalUrl": "https://www.example.com/very/long/url/that/needs/shortening",
     "createdAt": "2026-09-22T11:28:37.661Z",
     "clicks": 1
+  },
+  "uhrsj6": {
+    "originalUrl": "https://github.com/openai/gpt-3",
+    "createdAt": "2026-09-22T11:28:49.408Z",
+    "clicks": 0
+  },
+  "jhoxiw": {
+    "originalUrl": "https://stackoverflow.com/questions/tagged/javascript",
+    "createdAt": "2026-09-22T11:28:50.885Z",
+    "clicks": 0
   }
 }
