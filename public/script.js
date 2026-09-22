@@ -91,7 +91,7 @@ async function loadUrls() {
       .map(
         (url) => `
       <div class="url-item">
-        <div class="url-item-short">🔗 ${url.shortUrl}</div>
+        <a href="${url.shortUrl}" class="url-item-short">🔗 ${url.shortUrl}</a>
         <div class="url-item-original">→ ${url.longUrl}</div>
       </div>
     `
