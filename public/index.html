@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔗 URL Shortener</h1>
+      <p>Transform long URLs into short, shareable links</p>
+    </header>
+
+    <main>
+      <section class="input-section">
+        <form id="shortenForm">
+          <input
+            type="url"
+            id="urlInput"
+            placeholder="https://example.com/very/long/url"
+            required
+          >
+          <button type="submit">Shorten URL</button>
+        </form>
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+      </section>
+
+      <section class="links-section">
+        <h2>Your Shortened URLs</h2>
+        <div id="linksList" class="links-list">
+          <p class="empty-state">No URLs shortened yet</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built with Node.js and Express</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
