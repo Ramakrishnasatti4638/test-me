@@ -62,18 +62,25 @@ async function loadLinks() {
     document.querySelectorAll('.copy-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const shortUrl = btn.dataset.shortUrl;
         try {
           await navigator.clipboard.writeText(shortUrl);
-          const originalText = btn.textContent;
+          const originalText = 'Copy';
           btn.textContent = 'Copied!';
           btn.classList.add('copied');
+          btn.disabled = true;
           setTimeout(() => {
             btn.textContent = originalText;
             btn.classList.remove('copied');
+            btn.disabled = false;
           }, 2000);
         } catch (err) {
           console.error('Failed to copy:', err);
+          btn.textContent = 'Failed to copy';
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+          }, 2000);
         }
       });
     });

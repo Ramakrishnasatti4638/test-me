@@ -12,8 +12,16 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // In-memory storage for URL mappings
+// Clear data on startup to ensure clean state for each test run
 const urlMap = new Map();
 let shortCodeCounter = 1000;
+
+// API to clear data (for testing purposes)
+app.post('/api/clear', (req, res) => {
+  urlMap.clear();
+  shortCodeCounter = 1000;
+  res.json({ message: 'Data cleared' });
+});
 
 /**
  * Generate a short code from a number

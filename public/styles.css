@@ -165,8 +165,13 @@ button[type="submit"]:active {
   transition: background 0.2s;
 }
 
-.copy-btn:hover {
+.copy-btn:hover:not(:disabled) {
   background: #764ba2;
+}
+
+.copy-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
 }
 
 .copy-btn.copied {
