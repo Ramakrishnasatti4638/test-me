@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>URL Shortener</h1>
+      <p>Make your long URLs short and shareable</p>
+    </header>
+
+    <main>
+      <form id="shortenForm" class="form">
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="urlInput" 
+            placeholder="Paste your long URL here..." 
+            required
+            aria-label="URL to shorten"
+          >
+          <button type="submit" class="btn-primary">Shorten</button>
+        </div>
+        <div id="error" class="error"></div>
+      </form>
+
+      <div id="result" class="result hidden">
+        <div class="result-card">
+          <div class="result-section">
+            <label>Original URL</label>
+            <div class="result-text original-url" id="originalUrl"></div>
+          </div>
+
+          <div class="result-section">
+            <label>Shortened URL</label>
+            <div class="url-display">
+              <div class="result-text short-url" id="shortUrl"></div>
+              <button type="button" class="btn-copy" id="copyBtn" aria-label="Copy short URL">
+                <span class="copy-icon">📋</span>
+                <span class="copy-text">Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-secondary" id="newUrlBtn">Shorten Another URL</button>
+        </div>
+      </div>
+
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Creating your short URL...</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
