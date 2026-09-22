@@ -29,15 +29,18 @@ app.post('/api/shorten', (req, res) => {
     return res.status(400).json({ error: 'Invalid URL format' });
   }
 
-  // Generate short ID
-  const shortCode = shortid.generate();
-  urlMap[shortCode] = url;
+  // Simulate processing delay (1.5 seconds) to show loading state
+  setTimeout(() => {
+    // Generate short ID
+    const shortCode = shortid.generate();
+    urlMap[shortCode] = url;
 
-  res.json({
-    originalUrl: url,
-    shortUrl: `http://localhost:${PORT}/${shortCode}`,
-    shortCode: shortCode
-  });
+    res.json({
+      originalUrl: url,
+      shortUrl: `http://localhost:${PORT}/${shortCode}`,
+      shortCode: shortCode
+    });
+  }, 1500);
 });
 
 // GET /:shortCode - Redirect to original URL
