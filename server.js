@@ -100,13 +100,17 @@ app.get('/s/:code', (req, res) => {
         return res.status(404).json({ error: 'Short URL not found' });
       }
 
-      // Increment click count
+      // Increment click count and then redirect
       db.run(
         'UPDATE urls SET clicks = clicks + 1 WHERE short_code = ?',
-        [code]
+        [code],
+        (updateErr) => {
+          if (updateErr) {
+            console.error('Failed to increment click count:', updateErr);
+          }
+          res.redirect(row.original_url);
+        }
       );
-
-      res.redirect(row.original_url);
     }
   );
 });

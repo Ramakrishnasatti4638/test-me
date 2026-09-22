@@ -24,6 +24,11 @@ export default function App() {
     }
   };
 
+  const handleShortLinkClick = async (shortCode) => {
+    // Redirect to the short link
+    window.location.href = `/s/${shortCode}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -130,12 +135,24 @@ export default function App() {
 
       {urls.length > 0 && (
         <div className="urls-list">
-          <h2>Recent URLs ({urls.length})</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ margin: 0 }}>Recent URLs ({urls.length})</h2>
+            <button onClick={fetchUrls} className="refresh-btn">
+              🔄 Refresh
+            </button>
+          </div>
           {urls.map((item) => (
             <div key={item.short_code} className="url-item">
               <div className="url-info">
                 <div className="url-code">
-                  <strong>s/{item.short_code}</strong>
+                  <a 
+                    href={`/s/${item.short_code}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: 'none', color: '#0066cc', fontWeight: 'bold' }}
+                  >
+                    s/{item.short_code}
+                  </a>
                   <button
                     className="copy-btn"
                     onClick={() =>
@@ -153,7 +170,7 @@ export default function App() {
                   {item.original_url}
                 </div>
                 <div className="url-meta">
-                  {item.clicks} clicks • Created{' '}
+                  {item.clicks} {item.clicks === 1 ? 'click' : 'clicks'} • Created{' '}
                   {new Date(item.created_at).toLocaleDateString()}
                 </div>
               </div>
