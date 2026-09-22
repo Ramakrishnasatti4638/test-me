@@ -210,6 +210,16 @@
       margin-bottom: 5px;
     }
 
+    .url-item-short a {
+      color: #667eea;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .url-item-short a:hover {
+      text-decoration: underline;
+    }
+
     .url-item-original {
       color: #666;
       word-break: break-all;
@@ -316,7 +326,7 @@
       successMessage.textContent = msg;
       successMessage.classList.add('show');
       errorMessage.classList.remove('show');
-      setTimeout(() => successMessage.classList.remove('show'), 3000);
+      setTimeout(() => successMessage.classList.remove('show'), 5000);
     }
 
     function showError(msg) {
@@ -346,7 +356,7 @@
 
         urlsList.innerHTML = '<h3>Recent URLs</h3>' + urls.slice(-5).reverse().map(item => `
           <div class="url-item">
-            <div class="url-item-short">${item.shortUrl}</div>
+            <div class="url-item-short"><a href="${item.shortUrl}" target="_blank">${item.shortUrl}</a></div>
             <div class="url-item-original">${item.originalUrl}</div>
           </div>
         `).join('');
