@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,7 +13,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Color Emoji', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -34,6 +35,8 @@
             color: #333;
             margin-bottom: 10px;
             font-size: 28px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Color Emoji', sans-serif;
+            letter-spacing: 0.5px;
         }
 
         .subtitle {
@@ -88,6 +91,16 @@
 
         button:active {
             transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button:disabled:hover {
+            transform: none;
         }
 
         .result {
@@ -168,10 +181,31 @@
             font-size: 12px;
             margin-top: 5px;
             display: none;
+            font-weight: 500;
+            background: #e8f8f5;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border-left: 3px solid #27ae60;
         }
 
         .success.show {
             display: block;
+            animation: fadeInOut 0.3s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
         }
 
         .loading {
@@ -247,6 +281,8 @@
         const originalUrlEl = document.getElementById('originalUrl');
         const shortUrlEl = document.getElementById('shortUrl');
         const copySuccess = document.getElementById('copySuccess');
+        const submitButton = form.querySelector('button[type="submit"]');
+        let successTimeout;
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -257,6 +293,9 @@
             result.classList.remove('show');
             copySuccess.classList.remove('show');
             loading.classList.add('show');
+            
+            // Disable button during submission
+            submitButton.disabled = true;
 
             try {
                 const response = await fetch('/api/shorten', {
@@ -279,21 +318,41 @@
                 shortUrlEl.textContent = data.shortUrl;
                 result.classList.add('show');
                 urlInput.value = '';
+                submitButton.disabled = false;
             } catch (err) {
                 loading.classList.remove('show');
                 error.textContent = err.message || 'An error occurred';
                 error.classList.add('show');
+                submitButton.disabled = false;
             }
         });
 
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             const text = element.textContent;
+            
+            // Clear any existing timeout
+            if (successTimeout) {
+                clearTimeout(successTimeout);
+            }
+            
             navigator.clipboard.writeText(text).then(() => {
                 copySuccess.classList.add('show');
-                setTimeout(() => {
+                successTimeout = setTimeout(() => {
                     copySuccess.classList.remove('show');
-                }, 2000);
+                }, 3000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                copySuccess.classList.add('show');
+                successTimeout = setTimeout(() => {
+                    copySuccess.classList.remove('show');
+                }, 3000);
             });
         }
     </script>
