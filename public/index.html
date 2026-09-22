@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>🔗 URL Shortener</h1>
+      <p class="subtitle">Create short, shareable links instantly</p>
+
+      <form id="shortenForm">
+        <div class="input-group">
+          <input
+            type="url"
+            id="urlInput"
+            placeholder="Enter your long URL here..."
+            required
+          >
+          <button type="submit" class="btn btn-primary">Shorten</button>
+        </div>
+      </form>
+
+      <div id="resultContainer" class="result-container hidden">
+        <div class="result-box">
+          <p class="label">Your short link:</p>
+          <div class="result-link">
+            <input type="text" id="shortUrlDisplay" readonly>
+            <button class="btn btn-secondary" id="copyBtn">Copy</button>
+          </div>
+          <p class="label">Original URL:</p>
+          <p class="original-url" id="originalUrlDisplay"></p>
+        </div>
+      </div>
+
+      <div id="errorContainer" class="error-container hidden">
+        <p id="errorMessage"></p>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Recent Links</h2>
+      <div id="urlsList" class="urls-list">
+        <p class="empty-state">No links created yet</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
