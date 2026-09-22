@@ -45,9 +45,20 @@ app.post('/api/shorten', (req, res) => {
   });
 });
 
+// Serve index.html for root path
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Redirect endpoint
 app.get('/:shortCode', (req, res) => {
   const { shortCode } = req.params;
+  
+  // Don't intercept API calls or other static assets
+  if (shortCode.startsWith('api')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  
   const originalUrl = urlMap.get(shortCode);
 
   if (!originalUrl) {
@@ -55,11 +66,6 @@ app.get('/:shortCode', (req, res) => {
   }
 
   res.redirect(301, originalUrl);
-});
-
-// Serve index.html for root path
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Health check endpoint
