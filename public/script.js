@@ -2,7 +2,7 @@ const urlInput = document.getElementById('urlInput');
 const shortenBtn = document.getElementById('shortenBtn');
 const resultDiv = document.getElementById('result');
 const errorDiv = document.getElementById('error');
-const shortUrlInput = document.getElementById('shortUrlInput');
+const shortUrlLink = document.getElementById('shortUrlLink');
 const copyBtn = document.getElementById('copyBtn');
 const originalUrlSpan = document.getElementById('originalUrl');
 
@@ -18,13 +18,14 @@ urlInput.addEventListener('keypress', (e) => {
 
 // Copy to clipboard
 copyBtn.addEventListener('click', () => {
-  shortUrlInput.select();
-  document.execCommand('copy');
-  const originalText = copyBtn.textContent;
-  copyBtn.textContent = 'Copied!';
-  setTimeout(() => {
-    copyBtn.textContent = originalText;
-  }, 2000);
+  const shortUrl = shortUrlLink.textContent;
+  navigator.clipboard.writeText(shortUrl).then(() => {
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      copyBtn.textContent = originalText;
+    }, 2000);
+  });
 });
 
 async function handleShorten() {
@@ -60,7 +61,8 @@ async function handleShorten() {
     }
 
     // Display result
-    shortUrlInput.value = data.shortUrl;
+    shortUrlLink.href = data.shortUrl;
+    shortUrlLink.textContent = data.shortUrl;
     originalUrlSpan.textContent = data.originalUrl;
     resultDiv.style.display = 'block';
     urlInput.value = '';
