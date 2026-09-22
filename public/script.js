@@ -4,6 +4,7 @@ const resultDiv = document.getElementById('result');
 const errorDiv = document.getElementById('error');
 const shortUrlLink = document.getElementById('shortUrlLink');
 const copyBtn = document.getElementById('copyBtn');
+const testRedirectBtn = document.getElementById('testRedirectBtn');
 const originalUrlSpan = document.getElementById('originalUrl');
 
 // Shorten URL on button click
@@ -26,6 +27,12 @@ copyBtn.addEventListener('click', () => {
       copyBtn.textContent = originalText;
     }, 2000);
   });
+});
+
+// Test redirect button
+testRedirectBtn.addEventListener('click', () => {
+  // Navigate to the short URL which will trigger the redirect
+  window.location.href = shortUrlLink.href;
 });
 
 async function handleShorten() {

@@ -199,6 +199,30 @@ h1 {
   animation: slideIn 0.3s ease-out;
 }
 
+.btn-test {
+  width: 100%;
+  padding: 12px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.btn-test:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+}
+
+.btn-test:active {
+  transform: translateY(0);
+}
+
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
