@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔗 URL Shortener</h1>
+      <p class="subtitle">Make your URLs short and shareable</p>
+    </header>
+
+    <main>
+      <div class="shortener-section">
+        <div class="input-group">
+          <input
+            type="url"
+            id="longUrl"
+            placeholder="Enter your long URL here..."
+            class="url-input"
+          >
+          <button id="shortenBtn" class="shorten-btn">Shorten URL</button>
+        </div>
+
+        <div id="resultContainer" class="result-container" style="display: none;">
+          <div class="result">
+            <div class="result-item">
+              <label>Short URL:</label>
+              <div class="result-display">
+                <input type="text" id="shortUrl" readonly class="result-input">
+                <button id="copyBtn" class="copy-btn">Copy</button>
+              </div>
+            </div>
+            <div class="result-item">
+              <label>Original URL:</label>
+              <input type="text" id="originalUrl" readonly class="result-input">
+            </div>
+          </div>
+        </div>
+
+        <div id="errorContainer" class="error-container" style="display: none;">
+          <p id="errorMessage"></p>
+        </div>
+      </div>
+
+      <div class="history-section">
+        <h2>Recently Shortened URLs</h2>
+        <div id="urlList" class="url-list">
+          <p class="empty-message">No URLs shortened yet</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
