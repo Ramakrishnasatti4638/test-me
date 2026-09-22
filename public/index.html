@@ -278,6 +278,9 @@
           <button type="button" class="copy-btn" id="copyBtn">Copy</button>
         </div>
       </div>
+      <div class="result-content" style="margin-top: 15px;">
+        <button type="button" style="width: 100%; padding: 10px 16px; background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;" id="testRedirectBtn">Test Redirect</button>
+      </div>
     </div>
 
     <div class="history" id="history" style="display: none;">
@@ -295,8 +298,10 @@
     const historyDiv = document.getElementById('history');
     const historyList = document.getElementById('historyList');
     const copyBtn = document.getElementById('copyBtn');
+    const testRedirectBtn = document.getElementById('testRedirectBtn');
 
     let urlHistory = [];
+    let currentShortUrl = null;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -343,6 +348,7 @@
     function displayResult(data) {
       document.getElementById('originalUrlDisplay').textContent = data.originalUrl;
       document.getElementById('shortUrlDisplay').textContent = data.shortUrl;
+      currentShortUrl = data.shortUrl;
       resultDiv.classList.add('show');
 
       copyBtn.textContent = 'Copy';
@@ -391,6 +397,12 @@
         }, 2000);
       } catch (err) {
         showError('Failed to copy to clipboard');
+      }
+    });
+
+    testRedirectBtn.addEventListener('click', () => {
+      if (currentShortUrl) {
+        window.location.href = currentShortUrl;
       }
     });
   </script>
