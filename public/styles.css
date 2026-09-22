@@ -69,6 +69,11 @@ input[type="url"] {
   font-family: 'Courier New', monospace;
 }
 
+input[type="url"]::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
 input[type="url"]:focus {
   outline: none;
   border-color: #667eea;
