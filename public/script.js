@@ -12,6 +12,7 @@ const createdAt = document.getElementById('createdAt');
 const historyList = document.getElementById('historyList');
 
 let history = JSON.parse(localStorage.getItem('urlHistory')) || [];
+let currentShortId = null; // Track current short ID for updates
 
 function hideMessages() {
   errorMessage.classList.remove('show');
@@ -36,6 +37,7 @@ function updateResultDisplay(data) {
   originalUrlDisplay.value = data.originalUrl;
   clickCount.textContent = data.clicks || 0;
   createdAt.textContent = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-';
+  currentShortId = data.shortId;
   resultSection.classList.remove('hidden');
 }
 
@@ -137,8 +139,31 @@ function resetForm() {
   urlInput.value = '';
   resultSection.classList.add('hidden');
   hideMessages();
+  currentShortId = null;
   urlInput.focus();
 }
+
+// Refresh current result when page gains focus (after redirect)
+async function refreshCurrentResult() {
+  if (currentShortId) {
+    try {
+      const response = await fetch(`/api/stats/${currentShortId}`);
+      if (response.ok) {
+        const data = await response.json();
+        clickCount.textContent = data.clicks;
+      }
+    } catch (error) {
+      console.error('Error refreshing stats:', error);
+    }
+  }
+}
+
+// Listen for page visibility changes
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    refreshCurrentResult();
+  }
+});
 
 shortenBtn.addEventListener('click', shortenUrl);
 urlInput.addEventListener('keypress', (e) => {

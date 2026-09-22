@@ -8,7 +8,6 @@ const PORT = 3000;
 
 // Middleware
 app.use(express.json());
-app.use(express.static('public'));
 
 // Initialize SQLite database
 const db = new sqlite3.Database(':memory:');
@@ -73,7 +72,9 @@ app.post('/api/shorten', async (req, res) => {
     res.json({
       shortUrl: `http://localhost:${PORT}/${shortId}`,
       shortId,
-      originalUrl: url
+      originalUrl: url,
+      clicks: 0,
+      createdAt: new Date().toISOString()
     });
   } catch (error) {
     console.error(error);
@@ -81,10 +82,16 @@ app.post('/api/shorten', async (req, res) => {
   }
 });
 
-// Redirect to original URL
-app.get('/:shortId', async (req, res) => {
+// Redirect to original URL (must come before static files)
+app.get('/:shortId', async (req, res, next) => {
   try {
     const { shortId } = req.params;
+
+    // Check if it looks like a short ID (alphanumeric, 6 chars)
+    if (!/^[a-zA-Z0-9]{6}$/.test(shortId)) {
+      // Not a short ID, pass to next handler (static files)
+      return next();
+    }
 
     const row = await dbGet(
       'SELECT original_url, clicks FROM urls WHERE id = ?',
@@ -107,6 +114,9 @@ app.get('/:shortId', async (req, res) => {
     res.status(500).json({ error: 'Failed to redirect' });
   }
 });
+
+// Static files (after redirect route)
+app.use(express.static('public'));
 
 // Get URL info and stats
 app.get('/api/stats/:shortId', async (req, res) => {
