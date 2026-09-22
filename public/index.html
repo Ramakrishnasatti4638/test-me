@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>URL Shortener</h1>
+      <p class="subtitle">Shorten your long URLs into easy-to-share links</p>
+
+      <div class="input-group">
+        <input
+          type="url"
+          id="urlInput"
+          placeholder="Enter your long URL here..."
+          class="url-input"
+        >
+        <button id="shortenBtn" class="btn btn-primary">Shorten</button>
+      </div>
+
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+
+      <div id="resultSection" class="result-section hidden">
+        <div class="result-box">
+          <div class="result-item">
+            <label>Short URL</label>
+            <div class="result-content">
+              <input
+                type="text"
+                id="shortUrlDisplay"
+                class="result-input"
+                readonly
+              >
+              <button id="copyBtn" class="btn btn-secondary">Copy</button>
+            </div>
+          </div>
+
+          <div class="result-item">
+            <label>Original URL</label>
+            <div class="result-content">
+              <input
+                type="text"
+                id="originalUrlDisplay"
+                class="result-input"
+                readonly
+              >
+            </div>
+          </div>
+
+          <div class="result-item">
+            <label>Statistics</label>
+            <div class="stats">
+              <div class="stat">
+                <span class="stat-label">Clicks</span>
+                <span id="clickCount" class="stat-value">0</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Created</span>
+                <span id="createdAt" class="stat-value">-</span>
+              </div>
+            </div>
+          </div>
+
+          <button id="newUrlBtn" class="btn btn-primary full-width">Shorten Another URL</button>
+        </div>
+      </div>
+
+      <div id="historySection" class="history-section">
+        <h2>Recent URLs</h2>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
