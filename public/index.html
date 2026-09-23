@@ -229,7 +229,7 @@
     <div class="result-box" id="resultBox">
       <div class="result-label">Your short link</div>
       <div class="result-link-row">
-        <a href="#" id="resultLink" class="result-link" target="_blank" rel="noopener"></a>
+        <a href="#" id="resultLink" class="result-link"></a>
         <button class="copy-btn" id="copyBtn">Copy</button>
       </div>
     </div>
@@ -312,7 +312,7 @@
           const short = `${location.origin}${shortPath}`;
           return `
             <li class="history-item">
-              <a class="history-short" href="${short}" target="_blank" rel="noopener">${shortPath}</a>
+              <a class="history-short" href="${short}">${shortPath}</a>
               <span class="history-arrow">→</span>
               <span class="history-original" title="${originalUrl}">${originalUrl}</span>
             </li>`;
