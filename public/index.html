@@ -222,7 +222,7 @@
     <div class="result-box" id="result-box">
       <div class="result-url">
         <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:4px;">Your short link</div>
-        <a id="result-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <a id="result-link" href="#"></a>
       </div>
       <button class="copy-btn" id="copy-btn">Copy</button>
     </div>
@@ -317,7 +317,7 @@
           .map(
             ({ shortUrl, originalUrl }) => `
               <li class="history-item">
-                <span class="short"><a href="${shortUrl}" target="_blank" rel="noopener noreferrer">${shortUrl}</a></span>
+                <span class="short"><a href="${shortUrl}">${shortUrl}</a></span>
                 <span class="arrow">→</span>
                 <span class="original" title="${originalUrl}">${originalUrl}</span>
               </li>`
