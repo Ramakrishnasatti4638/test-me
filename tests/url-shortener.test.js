@@ -66,6 +66,22 @@ describe('GET /s/:code — clicking a short link redirects to the original URL',
     expect(redirectRes.headers['location']).toBe('https://www.openai.com');
   });
 
+  test('clicking the short link for github.com redirects to github.com', async () => {
+    // T4 — shorten github.com, click the link, verify redirect to github.com
+    const shortenRes = await request(app)
+      .post('/api/shorten')
+      .send({ url: 'https://github.com' });
+
+    expect(shortenRes.status).toBe(201);
+    const { shortUrl } = shortenRes.body;
+
+    // Simulate a click: GET the short URL without following redirects
+    const redirectRes = await request(app).get(shortUrl).redirects(0);
+
+    expect(redirectRes.status).toBe(302);
+    expect(redirectRes.headers['location']).toBe('https://github.com');
+  });
+
   test('redirects to the correct destination for multiple different short links', async () => {
     const urls = [
       'https://www.google.com',
