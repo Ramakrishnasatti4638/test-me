@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.4rem;
+    }
+
+    .logo svg { width: 36px; height: 36px; }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 1.8rem;
+      font-size: 0.95rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input[type="url"] {
+      flex: 1;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      color: #1a1a2e;
+    }
+
+    input[type="url"]:focus { border-color: #667eea; }
+
+    button.shorten-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.75rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    button.shorten-btn:hover { opacity: 0.9; }
+    button.shorten-btn:active { transform: scale(0.97); }
+
+    .error-msg {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      min-height: 1.2em;
+    }
+
+    .result-box {
+      margin-top: 1.4rem;
+      background: #f0f4ff;
+      border: 1.5px solid #c7d2fe;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result-box.visible { display: block; }
+
+    .result-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #667eea;
+      margin-bottom: 0.4rem;
+    }
+
+    .result-link-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .result-link {
+      flex: 1;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #4f46e5;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .result-link:hover { text-decoration: underline; }
+
+    button.copy-btn {
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    button.copy-btn:hover { background: #4f46e5; }
+    button.copy-btn.copied { background: #10b981; }
+
+    .divider {
+      border: none;
+      border-top: 1.5px solid #f3f4f6;
+      margin: 1.6rem 0 1.2rem;
+    }
+
+    .history-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.8rem;
+    }
+
+    .history-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .history-item .original {
+      color: #6b7280;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-item a {
+      color: #4f46e5;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .history-item a:hover { text-decoration: underline; }
+
+    .empty-state {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.88rem;
+      padding: 0.5rem 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="10" fill="url(#g)"/>
+        <path d="M14 18h8M20 14l4 4-4 4M16 14l-4 4 4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#667eea"/><stop offset="1" stop-color="#764ba2"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1>Snip.ly</h1>
+    </div>
+    <p class="subtitle">Paste a long URL and get a clean short link instantly.</p>
+
+    <div class="input-row">
+      <input type="url" id="urlInput" placeholder="https://example.com/very/long/url" />
+      <button class="shorten-btn" id="shortenBtn">Shorten</button>
+    </div>
+    <p class="error-msg" id="errorMsg"></p>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-label">Your short link</div>
+      <div class="result-link-row">
+        <a class="result-link" id="resultLink" href="#" target="_blank"></a>
+        <button class="copy-btn" id="copyBtn">Copy</button>
+      </div>
+    </div>
+
+    <hr class="divider" />
+    <div class="history-title">Recent Links</div>
+    <ul class="history-list" id="historyList">
+      <li class="empty-state" id="emptyState">No links shortened yet.</li>
+    </ul>
+  </div>
+
+  <script>
+    const urlInput   = document.getElementById('urlInput');
+    const shortenBtn = document.getElementById('shortenBtn');
+    const errorMsg   = document.getElementById('errorMsg');
+    const resultBox  = document.getElementById('resultBox');
+    const resultLink = document.getElementById('resultLink');
+    const copyBtn    = document.getElementById('copyBtn');
+    const historyList = document.getElementById('historyList');
+    const emptyState = document.getElementById('emptyState');
+
+    let history = [];
+
+    async function shorten() {
+      errorMsg.textContent = '';
+      const url = urlInput.value.trim();
+      if (!url) { errorMsg.textContent = 'Please enter a URL.'; return; }
+
+      shortenBtn.disabled = true;
+      shortenBtn.textContent = 'Shortening…';
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) { errorMsg.textContent = data.error || 'Something went wrong.'; return; }
+
+        const fullShort = window.location.origin + data.shortUrl;
+        resultLink.href = data.shortUrl;
+        resultLink.textContent = fullShort;
+        resultBox.classList.add('visible');
+
+        history.unshift({ original: url, short: fullShort, shortUrl: data.shortUrl });
+        renderHistory();
+        urlInput.value = '';
+      } catch {
+        errorMsg.textContent = 'Network error. Please try again.';
+      } finally {
+        shortenBtn.disabled = false;
+        shortenBtn.textContent = 'Shorten';
+      }
+    }
+
+    function renderHistory() {
+      if (history.length === 0) {
+        historyList.innerHTML = '<li class="empty-state" id="emptyState">No links shortened yet.</li>';
+        return;
+      }
+      historyList.innerHTML = history.map(item => `
+        <li class="history-item">
+          <span class="original" title="${escHtml(item.original)}">${escHtml(item.original)}</span>
+          <a href="${escHtml(item.shortUrl)}" target="_blank">${escHtml(item.short)}</a>
+        </li>`).join('');
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(resultLink.textContent).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 2000);
+      });
+    });
+
+    shortenBtn.addEventListener('click', shorten);
+    urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') shorten(); });
+  </script>
+</body>
+</html>
