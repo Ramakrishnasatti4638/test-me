@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snip — URL Shortener</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">✂️</span>
+        <span class="logo-text">Snip</span>
+      </div>
+      <p class="tagline">Shorten long URLs in one click</p>
+    </header>
+
+    <!-- Shortener Card -->
+    <main class="main">
+      <section class="card shorten-card">
+        <form id="shortenForm" class="shorten-form">
+          <div class="input-group">
+            <input
+              type="url"
+              id="urlInput"
+              class="url-input"
+              placeholder="https://your-very-long-url.com/goes/here"
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="btn-shorten" id="shortenBtn">
+              <span class="btn-text">Shorten</span>
+              <span class="btn-loader hidden">⏳</span>
+            </button>
+          </div>
+          <p class="error-msg hidden" id="errorMsg"></p>
+        </form>
+
+        <!-- Result -->
+        <div class="result hidden" id="result">
+          <div class="result-inner">
+            <a class="result-link" id="resultLink" href="#" target="_blank" rel="noopener noreferrer"></a>
+            <button class="btn-copy" id="copyBtn" title="Copy to clipboard">
+              <span id="copyIcon">📋</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- History Table -->
+      <section class="card history-card" id="historySection">
+        <h2 class="history-title">Recent Links</h2>
+        <div class="table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Short URL</th>
+                <th>Original URL</th>
+                <th>Clicks</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr class="empty-row" id="emptyRow">
+                <td colspan="4">No links yet — shorten one above!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">Built with ❤️ using Node.js &amp; Express</footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
