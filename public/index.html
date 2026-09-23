@@ -212,7 +212,7 @@
     <div class="result" id="result">
       <p class="result__label">✅ Your short link is ready!</p>
       <div class="result__link-row">
-        <a class="result__link" id="shortLink" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <a class="result__link" id="shortLink" href="#"></a>
         <button class="copy-btn" id="copyBtn">Copy</button>
       </div>
     </div>
@@ -287,7 +287,7 @@
       historyList.innerHTML = history.map(item => `
         <li>
           <span class="original" title="${item.original}">${item.original}</span>
-          <a href="${item.short}" target="_blank" rel="noopener noreferrer">${item.short}</a>
+          <a href="${item.short}">${item.short}</a>
         </li>
       `).join('');
     }
