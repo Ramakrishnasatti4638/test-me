@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 80px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      margin-top: 8px;
+      color: #9ca3af;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .input-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input:focus {
+      border-color: #a78bfa;
+    }
+
+    .input-row input::placeholder { color: #6b7280; }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #7c3aed, #3b82f6);
+      color: #fff;
+    }
+
+    .btn-primary:hover { opacity: 0.9; }
+
+    #result {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .result-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(167, 139, 250, 0.1);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 10px;
+      padding: 14px 18px;
+      flex-wrap: wrap;
+    }
+
+    .result-box span {
+      flex: 1;
+      font-size: 0.9rem;
+      color: #c4b5fd;
+      word-break: break-all;
+    }
+
+    .result-box a {
+      color: #60a5fa;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .result-box a:hover { text-decoration: underline; }
+
+    .btn-copy {
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      border-radius: 7px;
+      background: rgba(167, 139, 250, 0.2);
+      color: #a78bfa;
+      border: 1px solid rgba(167, 139, 250, 0.4);
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 600;
+    }
+
+    .btn-copy:hover { background: rgba(167, 139, 250, 0.35); }
+
+    #error-msg {
+      margin-top: 12px;
+      color: #f87171;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    /* History table */
+    .history-section {
+      width: 100%;
+      max-width: 640px;
+      margin-top: 40px;
+    }
+
+    .history-section h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #6b7280;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-weight: 600;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+    tbody td {
+      padding: 12px 14px;
+      vertical-align: middle;
+    }
+
+    .td-original {
+      color: #9ca3af;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .td-short a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .td-short a:hover { text-decoration: underline; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(96,165,250,0.15);
+      color: #60a5fa;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    #no-urls {
+      text-align: center;
+      color: #4b5563;
+      padding: 32px 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>⚡ URL Shortener</h1>
+    <p>Paste a long URL and get a short, shareable link instantly.</p>
+  </header>
+
+  <div class="card">
+    <div class="input-row">
+      <input
+        id="url-input"
+        type="url"
+        placeholder="https://example.com/very/long/url..."
+        autocomplete="off"
+      />
+      <button class="btn btn-primary" onclick="shortenUrl()">Shorten</button>
+    </div>
+    <div id="error-msg"></div>
+    <div id="result">
+      <div class="result-box">
+        <span id="short-display"></span>
+        <a id="short-link" href="#" target="_blank">Open ↗</a>
+        <button class="btn-copy" onclick="copyLink()">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="history-section">
+    <h2>Recent Links</h2>
+    <table id="url-table">
+      <thead>
+        <tr>
+          <th>Original URL</th>
+          <th>Short Link</th>
+          <th>Clicks</th>
+        </tr>
+      </thead>
+      <tbody id="url-tbody">
+        <tr><td colspan="3" id="no-urls">No links yet — shorten something!</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let lastShortUrl = '';
+
+    async function shortenUrl() {
+      const input = document.getElementById('url-input');
+      const errorMsg = document.getElementById('error-msg');
+      const result = document.getElementById('result');
+
+      errorMsg.style.display = 'none';
+      result.style.display = 'none';
+
+      const url = input.value.trim();
+      if (!url) {
+        showError('Please enter a URL.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Something went wrong.');
+          return;
+        }
+
+        lastShortUrl = window.location.origin + data.shortUrl;
+        document.getElementById('short-display').textContent = lastShortUrl;
+        document.getElementById('short-link').href = data.shortUrl;
+        result.style.display = 'block';
+        input.value = '';
+
+        loadHistory();
+      } catch (err) {
+        showError('Network error. Please try again.');
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(lastShortUrl).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = 'Copy'), 1500);
+      });
+    }
+
+    async function loadHistory() {
+      const res = await fetch('/api/urls');
+      const urls = await res.json();
+      const tbody = document.getElementById('url-tbody');
+
+      if (!urls.length) {
+        tbody.innerHTML = '<tr><td colspan="3" id="no-urls">No links yet — shorten something!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = urls
+        .slice()
+        .reverse()
+        .map(
+          (u) => `
+          <tr>
+            <td class="td-original" title="${escHtml(u.originalUrl)}">${escHtml(u.originalUrl)}</td>
+            <td class="td-short">
+              <a href="/r/${escHtml(u.code)}" target="_blank">/r/${escHtml(u.code)}</a>
+            </td>
+            <td><span class="badge">${u.clicks}</span></td>
+          </tr>`
+        )
+        .join('');
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.getElementById('url-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') shortenUrl();
+    });
+
+    loadHistory();
+  </script>
+</body>
+</html>
