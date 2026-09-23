@@ -63,7 +63,7 @@ describe('POST /api/shorten', () => {
 // GET /r/:code  — REDIRECT (core feature)
 // ─────────────────────────────────────────────────────────────
 describe('GET /r/:code — clicking a short link redirects to the original URL', () => {
-  test('clicking a short link redirects (301) to the original URL', async () => {
+  test('clicking a short link redirects (302) to the original URL', async () => {
     // Step 1: shorten a URL
     const originalUrl = 'https://www.openai.com';
     const shortenRes = await request(app)
@@ -76,8 +76,8 @@ describe('GET /r/:code — clicking a short link redirects to the original URL',
     // Step 2: "click" the short link — follow the /r/:code path
     const redirectRes = await request(app).get(shortUrl);
 
-    // Step 3: assert it redirects with 301 to the correct destination
-    expect(redirectRes.status).toBe(301);
+    // Step 3: assert it redirects with 302 to the correct destination
+    expect(redirectRes.status).toBe(302);
     expect(redirectRes.headers['location']).toBe(originalUrl);
   });
 
@@ -90,7 +90,7 @@ describe('GET /r/:code — clicking a short link redirects to the original URL',
     const { shortUrl } = shortenRes.body;
     const redirectRes = await request(app).get(shortUrl);
 
-    expect(redirectRes.status).toBe(301);
+    expect(redirectRes.status).toBe(302);
     expect(redirectRes.headers['location']).toBe(originalUrl);
   });
 

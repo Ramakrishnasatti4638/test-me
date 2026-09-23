@@ -49,7 +49,7 @@ app.get('/r/:code', (req, res) => {
     return res.status(404).json({ error: 'Short URL not found.' });
   }
 
-  return res.redirect(301, original);
+  return res.redirect(302, original);
 });
 
 // Export for testing; only listen when run directly
