@@ -295,7 +295,7 @@
 
         lastShortUrl = window.location.origin + data.shortUrl;
         document.getElementById('short-display').textContent = lastShortUrl;
-        document.getElementById('short-link').href = data.shortUrl;
+        document.getElementById('short-link').href = lastShortUrl;
         result.style.display = 'block';
         input.value = '';
 
@@ -337,7 +337,7 @@
           <tr>
             <td class="td-original" title="${escHtml(u.originalUrl)}">${escHtml(u.originalUrl)}</td>
             <td class="td-short">
-              <a href="/r/${escHtml(u.code)}" target="_blank">/r/${escHtml(u.code)}</a>
+              <a href="${window.location.origin}/r/${escHtml(u.code)}" target="_blank">/r/${escHtml(u.code)}</a>
             </td>
             <td><span class="badge">${u.clicks}</span></td>
           </tr>`
