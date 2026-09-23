@@ -1,0 +1,7 @@
+// Entry point — starts the HTTP server
+const { app } = require('./server');
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`URL Shortener running at http://localhost:${PORT}`);
+});
