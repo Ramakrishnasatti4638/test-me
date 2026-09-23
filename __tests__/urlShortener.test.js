@@ -92,22 +92,18 @@ describe('GET /:shortCode – redirect on click', () => {
     expect(redirectRes.headers['location']).toBe(originalUrl);
   });
 
-  test('clicking a short link follows through to the original URL', async () => {
-    const originalUrl = 'https://www.github.com';
+  test('redirect Location header points exactly to the original URL', async () => {
+    const originalUrl = 'https://www.github.com/features';
 
     const { body } = await request(app)
       .post('/api/shorten')
       .send({ url: originalUrl });
 
-    // redirects: true  →  supertest follows the redirect chain
-    const followRes = await request(app)
-      .get(`/${body.shortCode}`)
-      .redirects(5);
+    const res = await request(app).get(`/${body.shortCode}`);
 
-    // After following, we land outside our server (external URL).
-    // supertest will throw or return a non-404 status — either way the
-    // redirect was issued correctly. We just assert it wasn't a 404.
-    expect(followRes.status).not.toBe(404);
+    // Verify both the status and that Location points to the right place
+    expect(res.status).toBe(302);
+    expect(res.headers['location']).toBe(originalUrl);
   });
 
   test('returns 404 for an unknown short code', async () => {

@@ -15,14 +15,14 @@ app.post('/api/shorten', (req, res) => {
   const { url } = req.body;
 
   if (!url || typeof url !== 'string') {
-    return res.status(400).json({ error: 'A valid URL is required.' });
+    return res.status(400).json({ error: 'A valid URL is required.', message: 'A valid URL is required.' });
   }
 
   // Basic URL validation
   try {
     new URL(url);
   } catch {
-    return res.status(400).json({ error: 'Invalid URL format.' });
+    return res.status(400).json({ error: 'Invalid URL format.', message: 'Invalid URL format.' });
   }
 
   // Check if already shortened
@@ -53,7 +53,7 @@ app.get('/:shortCode', (req, res) => {
   const originalUrl = urlStore[shortCode];
 
   if (!originalUrl) {
-    return res.status(404).json({ error: 'Short URL not found.' });
+    return res.status(404).json({ error: 'Short URL not found.', message: 'Short URL not found.' });
   }
 
   res.redirect(302, originalUrl);
