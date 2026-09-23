@@ -296,7 +296,7 @@
         const shortUrl = `${BASE}/${data.shortCode}`;
         msg.innerHTML = `
           <div class="result-box">
-            <a href="${shortUrl}" target="_blank">${shortUrl}</a>
+            <a href="${shortUrl}">${shortUrl}</a>
             <button class="copy-btn" onclick="copyToClipboard('${shortUrl}', this)">Copy</button>
           </div>`;
 
@@ -332,7 +332,7 @@
         return `
           <div class="link-row">
             <div class="link-row-info">
-              <div class="link-row-short"><a href="${shortUrl}" target="_blank">${shortUrl}</a></div>
+              <div class="link-row-short"><a href="${shortUrl}">${shortUrl}</a></div>
               <div class="link-row-original" title="${link.originalUrl}">${link.originalUrl}</div>
             </div>
             <div class="link-row-meta">
