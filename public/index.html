@@ -233,7 +233,7 @@
     <div id="result-box">
       <div class="label">Your short link</div>
       <div class="copy-row">
-        <a id="short-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <a id="short-link" href="#"></a>
         <button id="copy-btn">Copy</button>
       </div>
     </div>
@@ -267,7 +267,7 @@
       linksContainer.innerHTML = links.map(l => `
         <div class="link-item" data-code="${l.shortCode}">
           <div class="info">
-            <a class="short" href="/${l.shortCode}" target="_blank" rel="noopener noreferrer">
+            <a class="short" href="/${l.shortCode}">
               ${location.origin}/${l.shortCode}
             </a>
             <div class="original" title="${l.originalUrl}">${l.originalUrl}</div>
@@ -309,7 +309,8 @@
           return;
         }
 
-        shortLink.href = data.shortUrl;
+        shortLink.dataset.url = data.shortUrl;
+        shortLink.removeAttribute('href');
         shortLink.textContent = data.shortUrl;
         resultBox.style.display = 'block';
         urlInput.value = '';
@@ -325,10 +326,17 @@
     urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') shortenBtn.click(); });
 
     copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(shortLink.href).then(() => {
+      const url = shortLink.dataset.url || shortLink.href;
+      navigator.clipboard.writeText(url).then(() => {
         copyBtn.textContent = 'Copied!';
         setTimeout(() => copyBtn.textContent = 'Copy', 1800);
       });
+    });
+
+    shortLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const url = shortLink.dataset.url;
+      if (url) window.location.href = url;
     });
 
     fetchLinks();
