@@ -300,7 +300,7 @@
         }
 
         const full = `${location.origin}${data.shortUrl}`;
-        shortLink.href = data.shortUrl;
+        shortLink.href = full;
         shortLink.textContent = full;
         resultBox.style.display = 'flex';
         input.value = '';
