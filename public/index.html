@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+      color: #e2e8f0;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      margin-top: 8px;
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 13px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.07);
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input::placeholder { color: #64748b; }
+    .input-row input:focus { border-color: #a78bfa; }
+
+    .btn {
+      padding: 13px 22px;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: linear-gradient(135deg, #7c3aed, #3b82f6); color: #fff; }
+    .btn-danger  { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 6px 12px; font-size: 0.8rem; }
+
+    #error-msg {
+      margin-top: 12px;
+      color: #f87171;
+      font-size: 0.88rem;
+      min-height: 20px;
+    }
+
+    /* Result box */
+    #result-box {
+      margin-top: 20px;
+      padding: 18px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid rgba(124, 58, 237, 0.35);
+      border-radius: 12px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    #result-box .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    .copy-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #short-link {
+      flex: 1;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #a78bfa;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    #short-link:hover { text-decoration: underline; }
+
+    #copy-btn {
+      white-space: nowrap;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(167,139,250,0.4);
+      background: transparent;
+      color: #a78bfa;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #copy-btn:hover { background: rgba(167,139,250,0.15); }
+
+    /* Links table */
+    .section-title {
+      margin-top: 40px;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    #links-container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .link-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .link-item .info { flex: 1; overflow: hidden; }
+
+    .link-item .short {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #a78bfa;
+      text-decoration: none;
+    }
+    .link-item .short:hover { text-decoration: underline; }
+
+    .link-item .original {
+      font-size: 0.78rem;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .link-item .meta {
+      font-size: 0.75rem;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    .clicks-badge {
+      display: inline-block;
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    #empty-state {
+      text-align: center;
+      color: #475569;
+      font-size: 0.9rem;
+      padding: 32px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>⚡ URL Shortener</h1>
+    <p>Paste a long URL and get a short, shareable link instantly.</p>
+  </header>
+
+  <div class="card">
+    <div class="input-row">
+      <input type="url" id="url-input" placeholder="https://example.com/your-very-long-url..." />
+      <button class="btn btn-primary" id="shorten-btn">Shorten</button>
+    </div>
+    <div id="error-msg"></div>
+
+    <div id="result-box">
+      <div class="label">Your short link</div>
+      <div class="copy-row">
+        <a id="short-link" href="#"></a>
+        <button id="copy-btn">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Recent Links</div>
+  <div id="links-container">
+    <div id="empty-state">No links yet. Shorten your first URL above!</div>
+  </div>
+
+  <script>
+    const urlInput   = document.getElementById('url-input');
+    const shortenBtn = document.getElementById('shorten-btn');
+    const errorMsg   = document.getElementById('error-msg');
+    const resultBox  = document.getElementById('result-box');
+    const shortLink  = document.getElementById('short-link');
+    const copyBtn    = document.getElementById('copy-btn');
+    const linksContainer = document.getElementById('links-container');
+
+    async function fetchLinks() {
+      const res = await fetch('/api/links');
+      const links = await res.json();
+      renderLinks(links);
+    }
+
+    function renderLinks(links) {
+      if (!links.length) {
+        linksContainer.innerHTML = '<div id="empty-state">No links yet. Shorten your first URL above!</div>';
+        return;
+      }
+      linksContainer.innerHTML = links.map(l => `
+        <div class="link-item" data-code="${l.shortCode}">
+          <div class="info">
+            <a class="short" href="/${l.shortCode}">
+              ${location.origin}/${l.shortCode}
+            </a>
+            <div class="original" title="${l.originalUrl}">${l.originalUrl}</div>
+            <span class="clicks-badge">↗ ${l.clicks} click${l.clicks !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="meta">${new Date(l.createdAt).toLocaleDateString()}</div>
+          <button class="btn btn-danger" onclick="deleteLink('${l.shortCode}')">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteLink(code) {
+      await fetch(`/api/links/${code}`, { method: 'DELETE' });
+      fetchLinks();
+    }
+
+    shortenBtn.addEventListener('click', async () => {
+      const url = urlInput.value.trim();
+      errorMsg.textContent = '';
+
+      if (!url) {
+        errorMsg.textContent = 'Please enter a URL.';
+        return;
+      }
+
+      shortenBtn.disabled = true;
+      shortenBtn.textContent = 'Shortening…';
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = data.error || 'Something went wrong.';
+          return;
+        }
+
+        shortLink.dataset.url = data.shortUrl;
+        shortLink.removeAttribute('href');
+        shortLink.textContent = data.shortUrl;
+        resultBox.style.display = 'block';
+        urlInput.value = '';
+        fetchLinks();
+      } catch {
+        errorMsg.textContent = 'Network error. Please try again.';
+      } finally {
+        shortenBtn.disabled = false;
+        shortenBtn.textContent = 'Shorten';
+      }
+    });
+
+    urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') shortenBtn.click(); });
+
+    copyBtn.addEventListener('click', () => {
+      const url = shortLink.dataset.url || shortLink.href;
+      navigator.clipboard.writeText(url).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1800);
+      });
+    });
+
+    shortLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const url = shortLink.dataset.url;
+      if (url) window.location.href = url;
+    });
+
+    fetchLinks();
+  </script>
+</body>
+</html>
