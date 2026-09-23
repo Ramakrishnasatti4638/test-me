@@ -353,6 +353,12 @@
       if (e.key === 'Enter') shortenUrl();
     });
 
+    // Refresh history when the tab regains focus (e.g. after clicking Open ↗ in a new tab)
+    window.addEventListener('focus', loadHistory);
+
+    // Also poll every 2 s so click counts stay live even if focus event is missed
+    setInterval(loadHistory, 2000);
+
     loadHistory();
   </script>
 </body>
