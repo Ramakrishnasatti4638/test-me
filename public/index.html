@@ -227,7 +227,7 @@
     <div class="result-box" id="resultBox">
       <div class="result-label">Your short link</div>
       <div class="result-link-row">
-        <a class="result-link" id="resultLink" href="#" target="_blank"></a>
+        <a class="result-link" id="resultLink" href="#"></a>
         <button class="copy-btn" id="copyBtn">Copy</button>
       </div>
     </div>
@@ -270,7 +270,7 @@
         if (!res.ok) { errorMsg.textContent = data.error || 'Something went wrong.'; return; }
 
         const fullShort = window.location.origin + data.shortUrl;
-        resultLink.href = data.shortUrl;
+        resultLink.href = fullShort;
         resultLink.textContent = fullShort;
         resultBox.classList.add('visible');
 
@@ -293,7 +293,7 @@
       historyList.innerHTML = history.map(item => `
         <li class="history-item">
           <span class="original" title="${escHtml(item.original)}">${escHtml(item.original)}</span>
-          <a href="${escHtml(item.shortUrl)}" target="_blank">${escHtml(item.short)}</a>
+          <a href="${escHtml(item.short)}">${escHtml(item.short)}</a>
         </li>`).join('');
     }
 
