@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Shortener</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a24;
+      --border: #2e2e3f;
+      --accent: #6c63ff;
+      --accent-hover: #857dff;
+      --text: #e8e8f0;
+      --muted: #888899;
+      --success: #22c55e;
+      --error: #ef4444;
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 80px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header .logo {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6c63ff, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 100%;
+      max-width: 620px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-group input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      border-color: var(--accent);
+    }
+
+    .input-group input::placeholder {
+      color: var(--muted);
+    }
+
+    .btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 12px 22px;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: var(--accent-hover); }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    #message {
+      margin-top: 16px;
+      min-height: 24px;
+      font-size: 0.9rem;
+    }
+
+    #message.error { color: var(--error); }
+
+    .result-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .result-box a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+      word-break: break-all;
+    }
+
+    .result-box a:hover { text-decoration: underline; }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: var(--success); color: var(--success); }
+
+    .section-title {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 32px 0 16px;
+    }
+
+    #links-container {
+      width: 100%;
+      max-width: 620px;
+    }
+
+    .link-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .link-row-info { flex: 1; min-width: 0; }
+
+    .link-row-short a {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .link-row-short a:hover { text-decoration: underline; }
+
+    .link-row-original {
+      color: var(--muted);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+
+    .link-row-meta {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .clicks-badge {
+      background: rgba(108, 99, 255, 0.15);
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      border-radius: 20px;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 3px 10px;
+    }
+
+    .link-date {
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-top: 4px;
+    }
+
+    #empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px 0;
+      font-size: 0.9rem;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #fff4;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .input-group { flex-direction: column; }
+      .link-row { flex-direction: column; align-items: flex-start; }
+      .link-row-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">⚡ Snip.ly</div>
+    <p>Shorten any URL — fast and free</p>
+  </header>
+
+  <div class="card">
+    <div class="input-group">
+      <input type="url" id="url-input" placeholder="Paste your long URL here…" autocomplete="off" />
+      <button class="btn" id="shorten-btn" onclick="shortenUrl()">Shorten</button>
+    </div>
+    <div id="message"></div>
+  </div>
+
+  <div id="links-container">
+    <div class="section-title">Your Links</div>
+    <div id="links-list">
+      <div id="empty-state">No links yet. Shorten your first URL above!</div>
+    </div>
+  </div>
+
+  <script>
+    const BASE = window.location.origin;
+
+    async function shortenUrl() {
+      const input = document.getElementById('url-input');
+      const btn = document.getElementById('shorten-btn');
+      const msg = document.getElementById('message');
+      const url = input.value.trim();
+
+      if (!url) {
+        showMessage('Please enter a URL.', true);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>';
+      msg.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showMessage(data.error || 'Something went wrong.', true);
+          return;
+        }
+
+        const shortUrl = `${BASE}/${data.shortCode}`;
+        msg.innerHTML = `
+          <div class="result-box">
+            <a href="${shortUrl}" target="_blank">${shortUrl}</a>
+            <button class="copy-btn" onclick="copyToClipboard('${shortUrl}', this)">Copy</button>
+          </div>`;
+
+        input.value = '';
+        loadLinks();
+
+      } catch (err) {
+        showMessage('Network error. Please try again.', true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Shorten';
+      }
+    }
+
+    async function loadLinks() {
+      try {
+        const res = await fetch('/api/stats');
+        const links = await res.json();
+        renderLinks(links);
+      } catch {}
+    }
+
+    function renderLinks(links) {
+      const list = document.getElementById('links-list');
+      if (!links.length) {
+        list.innerHTML = '<div id="empty-state">No links yet. Shorten your first URL above!</div>';
+        return;
+      }
+
+      list.innerHTML = links.map(link => {
+        const shortUrl = `${BASE}/${link.shortCode}`;
+        const date = new Date(link.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return `
+          <div class="link-row">
+            <div class="link-row-info">
+              <div class="link-row-short"><a href="${shortUrl}" target="_blank">${shortUrl}</a></div>
+              <div class="link-row-original" title="${link.originalUrl}">${link.originalUrl}</div>
+            </div>
+            <div class="link-row-meta">
+              <div class="clicks-badge">${link.clicks} click${link.clicks !== 1 ? 's' : ''}</div>
+              <div class="link-date">${date}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    function showMessage(text, isError = false) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = isError ? 'error' : '';
+    }
+
+    // Allow Enter key to trigger shorten
+    document.getElementById('url-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') shortenUrl();
+    });
+
+    // Load existing links on page load
+    loadLinks();
+  </script>
+
+</body>
+</html>
