@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px;
+      color: #e0e0e0;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      margin-top: 8px;
+      color: #a0aec0;
+      font-size: 1.05rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input::placeholder { color: #718096; }
+
+    .input-row input:focus { border-color: #a78bfa; }
+
+    .input-row button {
+      padding: 14px 24px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .input-row button:hover { opacity: 0.88; transform: translateY(-1px); }
+    .input-row button:active { transform: translateY(0); }
+
+    #error-msg {
+      margin-top: 10px;
+      color: #fc8181;
+      font-size: 0.88rem;
+      min-height: 18px;
+    }
+
+    #result-box {
+      margin-top: 20px;
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    #result-box a {
+      color: #a78bfa;
+      font-weight: 600;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    #result-box a:hover { text-decoration: underline; }
+
+    #copy-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #a78bfa;
+      background: transparent;
+      color: #a78bfa;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    #copy-btn:hover { background: #a78bfa; color: #fff; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin: 28px 0;
+    }
+
+    .history-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #718096;
+      margin-bottom: 14px;
+    }
+
+    #url-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    #url-list::-webkit-scrollbar { width: 4px; }
+    #url-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+    .url-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .url-item .short {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .url-item .short a {
+      color: #60a5fa;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+    }
+
+    .url-item .short a:hover { text-decoration: underline; }
+
+    .url-item .original {
+      color: #718096;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: rgba(96,165,250,0.15);
+      color: #60a5fa;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid rgba(96,165,250,0.3);
+    }
+
+    #empty-state {
+      text-align: center;
+      color: #4a5568;
+      font-size: 0.9rem;
+      padding: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚡ URL Shortener</h1>
+    <p>Paste a long URL and get a short, shareable link instantly.</p>
+  </header>
+
+  <div class="card">
+    <div class="input-row">
+      <input type="url" id="url-input" placeholder="https://example.com/very/long/url..." />
+      <button id="shorten-btn">Shorten</button>
+    </div>
+    <div id="error-msg"></div>
+
+    <div id="result-box">
+      <a id="short-link" href="#" target="_blank"></a>
+      <button id="copy-btn">Copy</button>
+    </div>
+
+    <hr class="divider" />
+
+    <p class="history-title">Recent Links</p>
+    <ul id="url-list">
+      <li id="empty-state">No links shortened yet.</li>
+    </ul>
+  </div>
+
+  <script>
+    const input     = document.getElementById('url-input');
+    const shortenBtn = document.getElementById('shorten-btn');
+    const errorMsg  = document.getElementById('error-msg');
+    const resultBox = document.getElementById('result-box');
+    const shortLink = document.getElementById('short-link');
+    const copyBtn   = document.getElementById('copy-btn');
+    const urlList   = document.getElementById('url-list');
+    const emptyState = document.getElementById('empty-state');
+
+    async function loadHistory() {
+      try {
+        const res = await fetch('/api/urls');
+        const data = await res.json();
+        renderList(data);
+      } catch (_) {}
+    }
+
+    function renderList(items) {
+      if (!items.length) {
+        emptyState.style.display = 'block';
+        return;
+      }
+      emptyState.style.display = 'none';
+      urlList.innerHTML = '';
+      items.slice().reverse().forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'url-item';
+        li.innerHTML = `
+          <div class="short">
+            <span class="badge">SHORT</span>
+            <a href="${item.shortUrl}" target="_blank">${location.origin}${item.shortUrl}</a>
+          </div>
+          <div class="original" title="${item.originalUrl}">${item.originalUrl}</div>
+        `;
+        urlList.appendChild(li);
+      });
+    }
+
+    shortenBtn.addEventListener('click', async () => {
+      const url = input.value.trim();
+      errorMsg.textContent = '';
+      resultBox.style.display = 'none';
+
+      if (!url) {
+        errorMsg.textContent = 'Please enter a URL.';
+        return;
+      }
+
+      shortenBtn.disabled = true;
+      shortenBtn.textContent = 'Shortening…';
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = data.error || 'Something went wrong.';
+          return;
+        }
+
+        const full = `${location.origin}${data.shortUrl}`;
+        shortLink.href = data.shortUrl;
+        shortLink.textContent = full;
+        resultBox.style.display = 'flex';
+        input.value = '';
+
+        loadHistory();
+      } catch (_) {
+        errorMsg.textContent = 'Network error. Please try again.';
+      } finally {
+        shortenBtn.disabled = false;
+        shortenBtn.textContent = 'Shorten';
+      }
+    });
+
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') shortenBtn.click(); });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(shortLink.textContent).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+      });
+    });
+
+    loadHistory();
+  </script>
+</body>
+</html>
