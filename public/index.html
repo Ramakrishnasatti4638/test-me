@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="10" fill="#6366f1"/>
+          <path d="M10 18h16M20 12l6 6-6 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Snip<strong>ly</strong></span>
+      </div>
+    </header>
+
+    <main>
+      <h1>Shorten Your URL</h1>
+      <p class="subtitle">Paste a long link and get a clean, shareable short URL instantly.</p>
+
+      <form id="shorten-form">
+        <div class="input-group">
+          <input
+            type="url"
+            id="url-input"
+            placeholder="https://example.com/very/long/url..."
+            required
+            autocomplete="off"
+          />
+          <button type="submit" id="shorten-btn">
+            <span id="btn-text">Shorten</span>
+            <span id="btn-spinner" class="spinner hidden"></span>
+          </button>
+        </div>
+        <p id="error-msg" class="error hidden"></p>
+      </form>
+
+      <div id="result-card" class="result-card hidden">
+        <div class="result-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Your short link is ready!</span>
+        </div>
+
+        <div class="original-url">
+          <label>Original URL</label>
+          <p id="original-display"></p>
+        </div>
+
+        <div class="short-url-row">
+          <div class="short-url-box">
+            <label>Short URL</label>
+            <a id="short-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+          </div>
+          <button id="copy-btn" class="copy-btn" title="Copy to clipboard">
+            <svg id="copy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <svg id="check-icon" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="history-section" class="history-section hidden">
+        <h2>Recent Links</h2>
+        <ul id="history-list"></ul>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
