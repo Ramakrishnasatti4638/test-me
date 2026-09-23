@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --accent: #6c63ff;
+      --accent-hover: #5a52e0;
+      --accent-light: rgba(108, 99, 255, 0.15);
+      --text: #e8eaf6;
+      --muted: #8b90a7;
+      --border: #2e3250;
+      --success: #4caf82;
+      --error: #ff6b6b;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header .logo {
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6c63ff, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input::placeholder { color: var(--muted); }
+    .input-row input:focus { border-color: var(--accent); }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 22px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: var(--accent-hover); }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .result-box {
+      margin-top: 20px;
+      background: var(--accent-light);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px 18px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .result-box.visible { display: flex; }
+
+    .result-box a {
+      flex: 1;
+      color: #a78bfa;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .result-box a:hover { text-decoration: underline; }
+
+    .copy-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover { background: var(--accent-hover); }
+    .copy-btn.copied { background: var(--success); }
+
+    .error-msg {
+      margin-top: 12px;
+      color: var(--error);
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* Stats table */
+    .stats-section {
+      width: 100%;
+      max-width: 640px;
+      margin-top: 40px;
+    }
+
+    .stats-section h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    .stats-empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px;
+      font-size: 0.9rem;
+    }
+
+    .link-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .link-card .info { flex: 1; overflow: hidden; }
+
+    .link-card .short {
+      color: #a78bfa;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .link-card .short:hover { text-decoration: underline; }
+
+    .link-card .original {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge span {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    @media (max-width: 500px) {
+      .input-row { flex-direction: column; }
+      .card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">⚡ Snip.ly</div>
+    <p>Shorten any URL in one click</p>
+  </header>
+
+  <div class="card">
+    <div class="input-row">
+      <input type="url" id="urlInput" placeholder="Paste a long URL here…" autocomplete="off" />
+      <button class="btn" id="shortenBtn">Shorten</button>
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="result-box" id="resultBox">
+      <a id="shortLink" href="#" target="_blank"></a>
+      <button class="copy-btn" id="copyBtn">Copy</button>
+    </div>
+  </div>
+
+  <section class="stats-section">
+    <h2>Recent Links</h2>
+    <div id="linksList">
+      <div class="stats-empty">No links shortened yet. Go ahead!</div>
+    </div>
+  </section>
+
+  <script>
+    const urlInput = document.getElementById('urlInput');
+    const shortenBtn = document.getElementById('shortenBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultBox = document.getElementById('resultBox');
+    const shortLink = document.getElementById('shortLink');
+    const copyBtn = document.getElementById('copyBtn');
+    const linksList = document.getElementById('linksList');
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('visible');
+      resultBox.classList.remove('visible');
+    }
+
+    function clearError() {
+      errorMsg.classList.remove('visible');
+    }
+
+    async function shorten() {
+      const url = urlInput.value.trim();
+      if (!url) { showError('Please enter a URL.'); return; }
+
+      clearError();
+      shortenBtn.disabled = true;
+      shortenBtn.textContent = 'Shortening…';
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) { showError(data.error || 'Something went wrong.'); return; }
+
+        shortLink.href = data.shortUrl;
+        shortLink.textContent = data.shortUrl;
+        resultBox.classList.add('visible');
+        copyBtn.textContent = 'Copy';
+        copyBtn.classList.remove('copied');
+        urlInput.value = '';
+        loadStats();
+      } catch {
+        showError('Network error. Please try again.');
+      } finally {
+        shortenBtn.disabled = false;
+        shortenBtn.textContent = 'Shorten';
+      }
+    }
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(shortLink.href).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 2000);
+      });
+    });
+
+    shortenBtn.addEventListener('click', shorten);
+    urlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') shorten(); });
+
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const entries = await res.json();
+
+        if (!entries.length) {
+          linksList.innerHTML = '<div class="stats-empty">No links shortened yet. Go ahead!</div>';
+          return;
+        }
+
+        linksList.innerHTML = entries.map(e => {
+          const short = `${location.origin}/${e.shortCode}`;
+          return `
+            <div class="link-card">
+              <div class="info">
+                <a class="short" href="${short}" target="_blank">${short}</a>
+                <div class="original" title="${e.originalUrl}">${e.originalUrl}</div>
+              </div>
+              <div class="badge"><span>${e.clicks}</span> click${e.clicks !== 1 ? 's' : ''}</div>
+            </div>`;
+        }).join('');
+      } catch { /* silent */ }
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>
