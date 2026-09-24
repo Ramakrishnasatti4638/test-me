@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+        }
+
+        .result-label {
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .short-url-display {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            word-break: break-all;
+            flex: 1;
+        }
+
+        .btn-copy {
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background: #764ba2;
+        }
+
+        .btn-test {
+            padding: 6px 12px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .btn-test:hover {
+            background: #229954;
+        }
+
+        .test-result {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .test-result.show {
+            display: block;
+        }
+
+        .test-result.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .copy-success {
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .copy-success.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 URL Shortener</h1>
+
+        <div class="error" id="error"></div>
+
+        <div class="form-group">
+            <label for="urlInput">Enter your long URL:</label>
+            <input
+                type="text"
+                id="urlInput"
+                placeholder="https://example.com/very/long/url/path"
+            />
+        </div>
+
+        <button id="shortenBtn">Shorten URL</button>
+
+        <div class="result" id="result">
+            <div class="result-item">
+                <div class="result-label">Original URL:</div>
+                <div class="result-value" id="originalUrl"></div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Short URL:</div>
+                <div class="result-value">
+                    <div class="short-url-display" id="shortUrl"></div>
+                    <button class="btn-copy" onclick="copyToClipboard()">Copy</button>
+                    <button class="btn-test" id="testRedirectBtn">Run Test</button>
+                </div>
+                <div class="copy-success" id="copySuccess">✓ Copied to clipboard</div>
+            </div>
+
+            <div class="test-result" id="testResult"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentShortUrl = '';
+        let currentShortCode = '';
+        let currentOriginalUrl = '';
+
+        document.getElementById('shortenBtn').addEventListener('click', async () => {
+            const url = document.getElementById('urlInput').value.trim();
+            const errorEl = document.getElementById('error');
+            const resultEl = document.getElementById('result');
+            const testResultEl = document.getElementById('testResult');
+
+            // Clear previous messages
+            errorEl.classList.remove('show');
+            testResultEl.classList.remove('show');
+
+            if (!url) {
+                errorEl.textContent = 'Please enter a URL';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            try {
+                document.getElementById('shortenBtn').disabled = true;
+                document.getElementById('shortenBtn').textContent = 'Creating...';
+
+                const response = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to shorten URL');
+                }
+
+                const data = await response.json();
+                currentShortUrl = data.shortUrl;
+                currentShortCode = data.shortCode;
+                currentOriginalUrl = data.originalUrl;
+
+                document.getElementById('originalUrl').textContent = currentOriginalUrl;
+                document.getElementById('shortUrl').textContent = currentShortUrl;
+                resultEl.classList.add('show');
+            } catch (err) {
+                errorEl.textContent = 'Error: ' + err.message;
+                errorEl.classList.add('show');
+            } finally {
+                document.getElementById('shortenBtn').disabled = false;
+                document.getElementById('shortenBtn').textContent = 'Shorten URL';
+            }
+        });
+
+        document.getElementById('testRedirectBtn').addEventListener('click', async () => {
+            const testResultEl = document.getElementById('testResult');
+            testResultEl.classList.remove('show', 'error');
+            testResultEl.textContent = 'Testing redirect...';
+            testResultEl.classList.add('show');
+
+            try {
+                // Test 1: Verify the short URL is accessible via API
+                const response = await fetch(`/api/redirect/${currentShortCode}`);
+
+                if (!response.ok) {
+                    throw new Error('Short URL not found');
+                }
+
+                const data = await response.json();
+
+                if (data.originalUrl !== currentOriginalUrl) {
+                    throw new Error('Redirect URL does not match original URL');
+                }
+
+                // Test 2: Verify the redirect endpoint works
+                const redirectCheckResponse = await fetch(
+                    `/s/${currentShortCode}`,
+                    { redirect: 'manual' }
+                );
+
+                if (redirectCheckResponse.status !== 301 && redirectCheckResponse.status !== 302) {
+                    throw new Error('Redirect endpoint did not return proper redirect status');
+                }
+
+                // Build test message
+                testResultEl.classList.remove('error');
+                testResultEl.innerHTML = `
+                    <strong>✓ Redirect Test Passed!</strong><br><br>
+                    <div style="background: white; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                        <strong>Test Results:</strong><br>
+                        ✓ Short URL found in database<br>
+                        ✓ Original URL verified: ${data.originalUrl}<br>
+                        ✓ Redirect endpoint returns status ${redirectCheckResponse.status}<br>
+                        <br>
+                        <strong>When you click on the short link</strong> (${currentShortUrl}), <strong>it will redirect to:</strong><br>
+                        <code style="background: #f0f0f0; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px;">${data.originalUrl}</code>
+                    </div>
+                `;
+            } catch (err) {
+                testResultEl.classList.add('error');
+                testResultEl.innerHTML = `
+                    <strong>✗ Redirect Test Failed</strong><br><br>
+                    <div style="background: white; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                        Error: ${err.message}
+                    </div>
+                `;
+            }
+        });
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(currentShortUrl).then(() => {
+                const copySuccess = document.getElementById('copySuccess');
+                copySuccess.classList.add('show');
+                setTimeout(() => copySuccess.classList.remove('show'), 2000);
+            });
+        }
+
+        // Allow Enter key to shorten URL
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('shortenBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
