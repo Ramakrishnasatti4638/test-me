@@ -191,10 +191,8 @@
 
     .history-item .original {
       font-size: .75rem;
-      color: #475569;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: #94a3b8;
+      word-break: break-all;
     }
 
     .empty-history {
@@ -236,7 +234,7 @@
     <div class="result-box" id="result-box">
       <p>Your short link is ready</p>
       <div class="result-link-row">
-        <a id="result-link" href="#" target="_blank"></a>
+        <a id="result-link" href="#" target="_self"></a>
         <button class="copy-btn" id="copy-btn">Copy</button>
       </div>
     </div>
@@ -280,7 +278,7 @@
         if (!res.ok) { errorMsg.textContent = data.error || 'Something went wrong.'; return; }
 
         const full = window.location.origin + data.shortUrl;
-        resultLink.href = data.shortUrl;
+        resultLink.href = full;
         resultLink.textContent = full;
         resultBox.style.display = 'block';
 
@@ -306,7 +304,7 @@
         const li = document.createElement('li');
         li.className = 'history-item';
         li.innerHTML = `
-          <span class="short"><a href="${shortPath}" target="_blank">${short}</a></span>
+          <span class="short"><a href="${short}" target="_self">${short}</a></span>
           <span class="original" title="${original}">${original}</span>
         `;
         histList.appendChild(li);
