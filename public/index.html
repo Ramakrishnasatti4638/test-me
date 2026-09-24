@@ -209,7 +209,7 @@
     <div class="result" id="result">
       <p class="result-label">Your short link</p>
       <div class="result-row">
-        <a id="shortLink" class="short-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <a id="shortLink" class="short-link" href="#" target="_top"></a>
         <button class="copy-btn" id="copyBtn">Copy</button>
       </div>
     </div>
@@ -282,11 +282,33 @@
     }
 
     copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(shortLink.href).then(() => {
+      const url = shortLink.href;
+      const markCopied = () => {
         copyBtn.textContent = 'Copied!';
         setTimeout(() => (copyBtn.textContent = 'Copy'), 1800);
-      });
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(markCopied).catch(() => {
+          fallbackCopy(url);
+          markCopied();
+        });
+      } else {
+        fallbackCopy(url);
+        markCopied();
+      }
     });
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+    }
 
     function addHistory(original, short) {
       history.unshift({ original, short });
@@ -301,7 +323,7 @@
         li.className = 'history-item';
         li.innerHTML = `
           <span class="history-original" title="${original}">${original}</span>
-          <a class="history-short" href="${short}" target="_blank" rel="noopener noreferrer">${short}</a>
+          <a class="history-short" href="${short}" target="_top">${short}</a>
         `;
         historyList.appendChild(li);
       });
