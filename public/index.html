@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snip — URL Shortener</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="card">
+      <h1 class="title">🔗 Snip</h1>
+      <p class="subtitle">Paste a long URL and get a short, shareable link.</p>
+
+      <form id="shorten-form" class="form" autocomplete="off">
+        <input
+          id="url-input"
+          class="input"
+          type="url"
+          name="url"
+          placeholder="https://example.com/very/long/link"
+          required
+          aria-label="Long URL"
+        />
+        <button id="submit-btn" class="button" type="submit">Shorten</button>
+      </form>
+
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <div id="result" class="result" hidden>
+        <span class="result-label">Your short link</span>
+        <div class="result-row">
+          <a id="short-link" class="short-link" href="#" target="_blank" rel="noopener"></a>
+          <button id="copy-btn" class="copy-btn" type="button">Copy</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
