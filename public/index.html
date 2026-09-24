@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease-in;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-left: 4px solid #667eea;
+            border-radius: 3px;
+        }
+
+        .result-item p {
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .result-item strong {
+            color: #333;
+            display: block;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .short-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .short-link:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            padding: 10px;
+            background: #fadbd8;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success {
+            color: #27ae60;
+            margin-top: 10px;
+            padding: 10px;
+            background: #d5f4e6;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        #urls-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 URL Shortener</h1>
+
+        <form id="shortenForm">
+            <div class="form-group">
+                <label for="urlInput">Enter your URL:</label>
+                <input 
+                    type="url" 
+                    id="urlInput" 
+                    placeholder="https://example.com/very/long/url" 
+                    required
+                >
+            </div>
+            <button type="submit">Shorten URL</button>
+            <div class="error" id="errorMsg"></div>
+            <div class="success" id="successMsg"></div>
+        </form>
+
+        <div id="result" class="result">
+            <h2>Shortened URLs</h2>
+            <div id="urls-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('shortenForm');
+        const urlInput = document.getElementById('urlInput');
+        const resultDiv = document.getElementById('result');
+        const urlsList = document.getElementById('urls-list');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to shorten URL');
+                }
+
+                const data = await response.json();
+                urlInput.value = '';
+                loadUrls();
+                showSuccess('URL shortened successfully!');
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        async function loadUrls() {
+            try {
+                const response = await fetch('/api/urls');
+                const urls = await response.json();
+
+                urlsList.innerHTML = urls.map(item => `
+                    <div class="result-item">
+                        <p><strong>Original URL:</strong> ${item.originalUrl}</p>
+                        <p><strong>Short Link:</strong> <a class="short-link" href="${item.shortUrl}" target="_blank">${item.shortUrl}</a></p>
+                        <button class="copy-btn" onclick="copyToClipboard('${item.shortUrl}')">Copy Link</button>
+                    </div>
+                `).join('');
+
+                resultDiv.classList.add('show');
+            } catch (error) {
+                showError('Failed to load URLs');
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showSuccess('Link copied to clipboard!');
+            });
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.classList.add('show');
+        }
+
+        function showSuccess(message) {
+            successMsg.textContent = message;
+            successMsg.classList.add('show');
+            setTimeout(() => successMsg.classList.remove('show'), 3000);
+        }
+
+        // Load URLs on page load
+        loadUrls();
+    </script>
+</body>
+</html>
