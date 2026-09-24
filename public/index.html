@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snip · URL Shortener</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1>🔗 Snip</h1>
+        <p class="subtitle">Turn long, messy URLs into short links you can share.</p>
+      </header>
+
+      <form id="shorten-form" class="card">
+        <label for="url-input" class="sr-only">URL to shorten</label>
+        <div class="input-row">
+          <input
+            id="url-input"
+            name="url"
+            type="url"
+            placeholder="https://example.com/really/long/path"
+            autocomplete="off"
+            required
+          />
+          <button type="submit" id="submit-btn">Shorten</button>
+        </div>
+        <p id="error" class="error" role="alert" hidden></p>
+      </form>
+
+      <section class="card" aria-labelledby="links-heading">
+        <h2 id="links-heading">Your links</h2>
+        <ul id="links" class="links"></ul>
+        <p id="empty" class="empty">No links yet — shorten one above!</p>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
