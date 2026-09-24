@@ -11,6 +11,27 @@ const urlMap = new Map();
 
 // Middleware
 app.use(express.json());
+
+// CRITICAL: Redirect route BEFORE static middleware to ensure it's handled properly
+// This prevents static files from interfering with short code routes
+app.get('/:shortCode', (req, res) => {
+  const { shortCode } = req.params;
+  
+  // Skip if it looks like a file extension or API route
+  if (shortCode.includes('.') || shortCode.startsWith('api')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  
+  const originalUrl = urlMap.get(shortCode);
+
+  if (!originalUrl) {
+    return res.status(404).json({ error: 'Short URL not found' });
+  }
+
+  res.redirect(originalUrl);
+});
+
+// Now serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API: Shorten URL
@@ -36,18 +57,6 @@ app.post('/api/shorten', (req, res) => {
     shortUrl: `http://localhost:3000/${shortCode}`,
     originalUrl: url,
   });
-});
-
-// API: Redirect
-app.get('/:shortCode', (req, res) => {
-  const { shortCode } = req.params;
-  const originalUrl = urlMap.get(shortCode);
-
-  if (!originalUrl) {
-    return res.status(404).json({ error: 'Short URL not found' });
-  }
-
-  res.redirect(originalUrl);
 });
 
 // API: Get stats (for testing)

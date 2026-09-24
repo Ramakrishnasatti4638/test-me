@@ -139,6 +139,48 @@
       color: white;
     }
 
+    .copy-btn.copied {
+      background: #27ae60;
+      color: white;
+      border-color: #27ae60;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .test-redirect-btn {
+      flex: 1;
+      padding: 8px;
+      background: #3498db;
+      color: white;
+      border: 2px solid #3498db;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .test-redirect-btn:hover {
+      background: #2980b9;
+      border-color: #2980b9;
+    }
+
+    .copy-status {
+      display: none;
+      color: #27ae60;
+      font-size: 12px;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    .copy-status.show {
+      display: block;
+    }
+
     .error {
       background: #ffebee;
       color: #c62828;
@@ -204,7 +246,11 @@
     <div class="result" id="result">
       <div class="result-label">Short URL</div>
       <div class="result-value" id="shortUrl"></div>
-      <button class="copy-btn" id="copyBtn">📋 Copy Short URL</button>
+      <div class="button-group">
+        <button class="copy-btn" id="copyBtn">📋 Copy Short URL</button>
+        <button class="test-redirect-btn" id="testRedirectBtn">🧪 Test Redirect</button>
+      </div>
+      <div class="copy-status" id="copyStatus">✓ Copied to clipboard!</div>
     </div>
   </div>
 
@@ -214,6 +260,8 @@
     const resultDiv = document.getElementById('result');
     const shortUrlDiv = document.getElementById('shortUrl');
     const copyBtn = document.getElementById('copyBtn');
+    const testRedirectBtn = document.getElementById('testRedirectBtn');
+    const copyStatus = document.getElementById('copyStatus');
     const errorDiv = document.getElementById('error');
     const loadingDiv = document.getElementById('loading');
 
@@ -246,6 +294,9 @@
         shortUrlDiv.textContent = data.shortUrl;
         resultDiv.classList.add('show');
         loadingDiv.classList.remove('show');
+        copyStatus.classList.remove('show');
+        copyBtn.classList.remove('copied');
+        copyBtn.textContent = '📋 Copy Short URL';
       } catch (error) {
         showError('An error occurred. Please try again.');
         loadingDiv.classList.remove('show');
@@ -256,10 +307,24 @@
       const shortUrl = shortUrlDiv.textContent;
       navigator.clipboard.writeText(shortUrl).then(() => {
         copyBtn.textContent = '✓ Copied!';
+        copyBtn.classList.add('copied');
+        copyStatus.classList.add('show');
+        
         setTimeout(() => {
           copyBtn.textContent = '📋 Copy Short URL';
-        }, 2000);
+          copyBtn.classList.remove('copied');
+          copyStatus.classList.remove('show');
+        }, 3000);
+      }).catch(() => {
+        showError('Failed to copy to clipboard');
       });
+    });
+
+    testRedirectBtn.addEventListener('click', () => {
+      const shortUrl = shortUrlDiv.textContent;
+      if (shortUrl) {
+        window.location.href = shortUrl;
+      }
     });
 
     urlInput.addEventListener('keypress', (e) => {
