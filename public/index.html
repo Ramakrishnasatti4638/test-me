@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shortly — URL Shortener</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>Shortly</h1>
+    <p class="subtitle">Paste a long URL and get a short, shareable link.</p>
+
+    <form id="shorten-form" autocomplete="off">
+      <input
+        id="url-input"
+        name="url"
+        type="text"
+        placeholder="https://example.com/very/long/link"
+        aria-label="URL to shorten"
+        required
+      />
+      <button type="submit" id="submit-btn">Shorten</button>
+    </form>
+
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <section id="result" class="result" hidden>
+      <span class="result-label">Your short link:</span>
+      <a id="short-link" class="short-link" href="#" target="_blank" rel="noopener"></a>
+      <button type="button" id="copy-btn" class="copy-btn">Copy</button>
+    </section>
+  </main>
+
+  <script src="/script.js"></script>
+</body>
+</html>
