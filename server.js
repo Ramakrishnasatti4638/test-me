@@ -67,7 +67,7 @@ app.get('/:shortCode', (req, res) => {
     return res.status(404).json({ error: 'Short URL not found' });
   }
 
-  res.redirect(longUrl);
+  res.redirect(302, longUrl);
 });
 
 const PORT = 3000;
