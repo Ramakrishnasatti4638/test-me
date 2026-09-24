@@ -224,7 +224,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>&#128279; URL Shortener</h1>
+    <h1>🔗 URL Shortener</h1>
     <p class="subtitle">Paste your long URL below to create a short link</p>
 
     <div class="input-group">
@@ -248,8 +248,8 @@
       <div class="result-label">Short URL</div>
       <div class="result-value" id="shortUrl"></div>
       <div class="button-group">
-        <button class="copy-btn" id="copyBtn">&#128203; Copy Short URL</button>
-        <button class="test-redirect-btn" id="testRedirectBtn">&#128498; Test Redirect</button>
+        <button class="copy-btn" id="copyBtn">📋 Copy Short URL</button>
+        <button class="test-redirect-btn" id="testRedirectBtn">🧪 Test Redirect</button>
       </div>
       <div class="copy-status" id="copyStatus">✓ Copied to clipboard!</div>
     </div>
@@ -297,7 +297,7 @@
         loadingDiv.classList.remove('show');
         copyStatus.classList.remove('show');
         copyBtn.classList.remove('copied');
-        copyBtn.textContent = '&#128203; Copy Short URL';
+        copyBtn.textContent = '📋 Copy Short URL';
       } catch (error) {
         showError('An error occurred. Please try again.');
         loadingDiv.classList.remove('show');
@@ -343,7 +343,7 @@
         errorDiv.classList.remove('show');
         
         setTimeout(() => {
-          copyBtn.textContent = '&#128203; Copy Short URL';
+          copyBtn.textContent = '📋 Copy Short URL';
           copyBtn.classList.remove('copied');
           copyStatus.classList.remove('show');
         }, 3000);
