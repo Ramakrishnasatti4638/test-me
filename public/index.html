@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 5px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 12px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .result {
+      background: #e8f5e9;
+      padding: 20px;
+      border-radius: 5px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result h3 {
+      color: #2e7d32;
+      margin-bottom: 10px;
+    }
+
+    .result-item {
+      margin: 10px 0;
+      word-break: break-all;
+    }
+
+    .result-item label {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
+
+    .result-item p {
+      color: #333;
+      background: white;
+      padding: 8px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+
+    .copy-btn {
+      padding: 8px 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .copy-btn:hover {
+      background: #5568d3;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔗 URL Shortener</h1>
+    
+    <form id="shortenForm">
+      <div class="form-group">
+        <label for="urlInput">Enter your long URL:</label>
+        <input 
+          type="url" 
+          id="urlInput" 
+          placeholder="https://example.com/very/long/url" 
+          required
+        >
+      </div>
+      <button type="submit">Shorten URL</button>
+    </form>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Creating short URL...</p>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div class="result" id="result">
+      <h3>✓ Short URL Created!</h3>
+      <div class="result-item">
+        <label>Short Link:</label>
+        <p id="shortUrl"></p>
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+      </div>
+      <div class="result-item">
+        <label>Original URL:</label>
+        <p id="originalUrl"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('shortenForm');
+    const urlInput = document.getElementById('urlInput');
+    const errorDiv = document.getElementById('error');
+    const resultDiv = document.getElementById('result');
+    const loadingDiv = document.getElementById('loading');
+    const shortUrlDisplay = document.getElementById('shortUrl');
+    const originalUrlDisplay = document.getElementById('originalUrl');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const url = urlInput.value.trim();
+      if (!url) return;
+
+      errorDiv.classList.remove('show');
+      resultDiv.classList.remove('show');
+      loadingDiv.style.display = 'block';
+
+      try {
+        const response = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ url })
+        });
+
+        loadingDiv.style.display = 'none';
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to shorten URL');
+        }
+
+        const data = await response.json();
+        shortUrlDisplay.textContent = data.shortUrl;
+        originalUrlDisplay.textContent = data.originalUrl;
+        resultDiv.classList.add('show');
+        urlInput.value = '';
+      } catch (error) {
+        loadingDiv.style.display = 'none';
+        errorDiv.textContent = '❌ ' + error.message;
+        errorDiv.classList.add('show');
+      }
+    });
+
+    function copyToClipboard() {
+      const text = shortUrlDisplay.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+      });
+    }
+  </script>
+</body>
+</html>
