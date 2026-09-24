@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 80px;
+      color: #f0f0f0;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      color: #94a3b8;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-group input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input::placeholder { color: #64748b; }
+    .input-group input:focus { border-color: #a78bfa; }
+
+    .btn {
+      padding: 14px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+
+    #result {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .result-box {
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .result-box span {
+      flex: 1;
+      font-size: 0.9rem;
+      color: #c4b5fd;
+      word-break: break-all;
+    }
+
+    .result-box a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .result-box a:hover { text-decoration: underline; }
+
+    .copy-btn {
+      background: rgba(96,165,250,0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(96,165,250,0.3);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover { background: rgba(96,165,250,0.25); }
+
+    #error-msg {
+      margin-top: 12px;
+      color: #f87171;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    h2.section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin: 36px 0 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    #url-list {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .url-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .url-item .info { flex: 1; min-width: 0; }
+
+    .url-item .short-link a {
+      color: #a78bfa;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    .url-item .short-link a:hover { text-decoration: underline; }
+
+    .url-item .original {
+      color: #64748b;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+
+    .delete-btn {
+      background: transparent;
+      border: 1px solid rgba(248,113,113,0.3);
+      color: #f87171;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .delete-btn:hover { background: rgba(248,113,113,0.1); }
+
+    #empty-state {
+      text-align: center;
+      color: #475569;
+      padding: 24px 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>⚡ URL Shortener</h1>
+    <p>Paste a long URL and get a short, shareable link instantly.</p>
+  </header>
+
+  <div class="card">
+    <div class="input-group">
+      <input type="url" id="url-input" placeholder="https://example.com/very/long/url..." />
+      <button class="btn btn-primary" id="shorten-btn" onclick="shortenUrl()">Shorten</button>
+    </div>
+    <div id="error-msg"></div>
+    <div id="result">
+      <div class="result-box">
+        <span>Your short link: <a id="short-link" href="#" target="_blank" rel="noopener noreferrer"></a></span>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">All Shortened URLs</h2>
+  <div id="url-list"></div>
+
+  <script>
+    let baseUrl = window.location.origin;
+
+    async function shortenUrl() {
+      const input = document.getElementById('url-input');
+      const errorEl = document.getElementById('error-msg');
+      const resultEl = document.getElementById('result');
+      const btn = document.getElementById('shorten-btn');
+
+      const url = input.value.trim();
+      errorEl.style.display = 'none';
+      resultEl.style.display = 'none';
+
+      if (!url) {
+        showError('Please enter a URL.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Shortening…';
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Something went wrong.');
+          return;
+        }
+
+        const fullShortUrl = `${baseUrl}${data.shortUrl}`;
+        const linkEl = document.getElementById('short-link');
+        linkEl.href = data.shortUrl;
+        linkEl.textContent = fullShortUrl;
+        resultEl.style.display = 'block';
+        input.value = '';
+        loadUrls();
+      } catch (err) {
+        showError('Network error. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Shorten';
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    async function copyLink() {
+      const link = document.getElementById('short-link').textContent;
+      await navigator.clipboard.writeText(link);
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => (btn.textContent = 'Copy'), 1500);
+    }
+
+    async function loadUrls() {
+      const res = await fetch('/api/urls');
+      const urls = await res.json();
+      const list = document.getElementById('url-list');
+
+      if (!urls.length) {
+        list.innerHTML = '<div id="empty-state">No URLs shortened yet. Try one above!</div>';
+        return;
+      }
+
+      list.innerHTML = urls.map(u => `
+        <div class="url-item" data-code="${u.shortCode}">
+          <div class="info">
+            <div class="short-link"><a href="${u.shortUrl}" target="_blank" rel="noopener noreferrer">${baseUrl}${u.shortUrl}</a></div>
+            <div class="original" title="${u.originalUrl}">${u.originalUrl}</div>
+          </div>
+          <button class="delete-btn" onclick="deleteUrl('${u.shortCode}')">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteUrl(code) {
+      await fetch(`/api/urls/${code}`, { method: 'DELETE' });
+      loadUrls();
+    }
+
+    // Allow pressing Enter to shorten
+    document.getElementById('url-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') shortenUrl();
+    });
+
+    loadUrls();
+  </script>
+</body>
+</html>
