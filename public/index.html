@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Link Snip — URL Shortener</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --accent: #6366f1;
+        --accent-hover: #4f46e5;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --border: #334155;
+        --success: #22c55e;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: radial-gradient(circle at top, #1e293b, var(--bg));
+        color: var(--text);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 48px 16px;
+      }
+      .container {
+        width: 100%;
+        max-width: 640px;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 2.25rem;
+        letter-spacing: -0.02em;
+      }
+      header p {
+        color: var(--muted);
+        margin: 8px 0 0;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      form {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      input[type="url"] {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 14px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #0f172a;
+        color: var(--text);
+        font-size: 1rem;
+      }
+      input[type="url"]:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      button {
+        padding: 14px 22px;
+        border: none;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      button:hover {
+        background: var(--accent-hover);
+      }
+      .error {
+        color: #f87171;
+        margin: 12px 4px 0;
+        min-height: 1.2em;
+      }
+      .links {
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .link-item {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .link-item .meta {
+        min-width: 0;
+      }
+      .link-item .short a {
+        color: var(--accent);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 1.05rem;
+      }
+      .link-item .short a:hover {
+        text-decoration: underline;
+      }
+      .link-item .original {
+        color: var(--muted);
+        font-size: 0.85rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-top: 4px;
+      }
+      .copy-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+      }
+      .copy-btn:hover {
+        background: #334155;
+      }
+      .copy-btn.copied {
+        border-color: var(--success);
+        color: var(--success);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Link Snip</h1>
+        <p>Paste a long URL and get a short, shareable link.</p>
+      </header>
+
+      <div class="card">
+        <form id="shorten-form">
+          <input
+            type="url"
+            id="url-input"
+            placeholder="https://example.com/very/long/link"
+            required
+          />
+          <button type="submit">Shorten</button>
+        </form>
+        <div class="error" id="error" role="alert"></div>
+      </div>
+
+      <div class="links" id="links"></div>
+    </div>
+
+    <script>
+      const form = document.getElementById("shorten-form");
+      const input = document.getElementById("url-input");
+      const errorEl = document.getElementById("error");
+      const linksEl = document.getElementById("links");
+
+      async function loadLinks() {
+        const res = await fetch("/api/links");
+        const data = await res.json();
+        renderLinks(data.links);
+      }
+
+      function renderLinks(links) {
+        linksEl.innerHTML = "";
+        links
+          .slice()
+          .reverse()
+          .forEach((link) => {
+            const item = document.createElement("div");
+            item.className = "link-item";
+
+            const meta = document.createElement("div");
+            meta.className = "meta";
+
+            const short = document.createElement("div");
+            short.className = "short";
+            const a = document.createElement("a");
+            a.href = "/" + link.code;
+            a.textContent = link.shortUrl;
+            a.target = "_blank";
+            a.rel = "noopener";
+            short.appendChild(a);
+
+            const original = document.createElement("div");
+            original.className = "original";
+            original.textContent = link.url;
+
+            meta.appendChild(short);
+            meta.appendChild(original);
+
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "copy-btn";
+            copyBtn.textContent = "Copy";
+            copyBtn.addEventListener("click", async () => {
+              await navigator.clipboard.writeText(link.shortUrl);
+              copyBtn.textContent = "Copied!";
+              copyBtn.classList.add("copied");
+              setTimeout(() => {
+                copyBtn.textContent = "Copy";
+                copyBtn.classList.remove("copied");
+              }, 1500);
+            });
+
+            item.appendChild(meta);
+            item.appendChild(copyBtn);
+            linksEl.appendChild(item);
+          });
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorEl.textContent = "";
+
+        const res = await fetch("/api/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: input.value }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          errorEl.textContent = data.error || "Something went wrong.";
+          return;
+        }
+
+        input.value = "";
+        loadLinks();
+      });
+
+      loadLinks();
+    </script>
+  </body>
+</html>
