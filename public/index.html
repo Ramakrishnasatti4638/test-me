@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            font-size: 14px;
+            word-break: break-all;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .short-link {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .short-link:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Link Shortener</h1>
+        <p class="subtitle">Shorten your URLs instantly</p>
+
+        <form id="shortenForm">
+            <div class="form-group">
+                <label for="longUrl">Enter your long URL:</label>
+                <input 
+                    type="text" 
+                    id="longUrl" 
+                    placeholder="https://example.com/very/long/url"
+                    required
+                >
+            </div>
+            <button type="submit">Shorten URL</button>
+        </form>
+
+        <div class="error" id="error"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <div class="result" id="result">
+            <div class="result-label">Original URL</div>
+            <div class="result-value" id="longUrlResult"></div>
+
+            <div class="result-label">Short URL</div>
+            <div class="result-value" id="shortUrlResult">
+                <a id="shortUrlLink" class="short-link" target="_blank"></a>
+                <button class="copy-btn" onclick="copyToClipboard(document.getElementById('shortUrlLink').href)">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('shortenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const longUrl = document.getElementById('longUrl').value;
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('successMessage');
+            
+            errorDiv.classList.remove('show');
+            successDiv.classList.remove('show');
+
+            try {
+                const response = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ longUrl }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to shorten URL');
+                }
+
+                const data = await response.json();
+                
+                document.getElementById('longUrlResult').textContent = data.longUrl;
+                document.getElementById('shortUrlLink').textContent = data.shortUrl;
+                document.getElementById('shortUrlLink').href = data.shortUrl;
+                
+                document.getElementById('result').classList.add('show');
+                successDiv.textContent = '✓ URL shortened successfully!';
+                successDiv.classList.add('show');
+                
+                document.getElementById('longUrl').value = '';
+                
+            } catch (error) {
+                errorDiv.textContent = '✗ ' + error.message;
+                errorDiv.classList.add('show');
+            }
+        });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
