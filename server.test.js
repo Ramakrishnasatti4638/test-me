@@ -48,14 +48,32 @@ describe('URL Shortener API', () => {
         .send({ url: 'https://www.google.com' });
 
       const code = createRes.body.shortCode;
+      const shortUrl = createRes.body.shortUrl;
 
-      // Now test the redirect
+      // Test 1: Verify API returns redirect status (302)
       const redirectRes = await request(app)
         .get(`/s/${code}`)
         .redirects(0);
 
       expect(redirectRes.statusCode).toBe(302);
       expect(redirectRes.header.location).toBe('https://www.google.com');
+
+      // Test 2: Verify clicking the short link navigates to correct URL
+      // The link should redirect when accessed via GET
+      const clickTest = await request(app)
+        .get(`/s/${code}`)
+        .redirects(0);
+
+      expect(clickTest.statusCode).toBe(302);
+      expect(clickTest.header.location).toBe('https://www.google.com');
+
+      // Test 3: Verify the short link is clickable (returns redirect header)
+      const clickableTest = await request(app)
+        .get(`/s/${code}`)
+        .set('Accept', 'text/html');
+
+      expect(clickableTest.statusCode).toBe(302);
+      expect(clickableTest.headers.location).toBe('https://www.google.com');
     });
 
     test('should redirect URL without protocol', async () => {

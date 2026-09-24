@@ -269,7 +269,7 @@
                 urlsList.innerHTML = urls.map(item => `
                     <div class="result-item">
                         <p><strong>Original URL:</strong> ${item.originalUrl}</p>
-                        <p><strong>Short Link:</strong> <a class="short-link" href="${item.shortUrl}" target="_blank">${item.shortUrl}</a></p>
+                        <p><strong>Short Link:</strong> <a class="short-link" href="${item.shortUrl}" target="_blank" data-testid="short-link-${item.shortCode}" data-redirect-url="${item.shortUrl}">${item.shortUrl}</a></p>
                         <button class="copy-btn" onclick="copyToClipboard('${item.shortUrl}')">Copy Link</button>
                     </div>
                 `).join('');
