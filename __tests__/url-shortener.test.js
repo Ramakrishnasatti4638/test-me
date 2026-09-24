@@ -93,10 +93,14 @@ describe('URL Shortener API', () => {
         .redirects(0); // Don't follow redirects, we want to check the redirect response
 
       // Should return 301 (Moved Permanently) status - this is a redirect
+      console.log(`✅ TEST RESULT: HTTP Status Code = ${res.status}`);
       expect(res.status).toBe(301);
       
       // The Location header should point to the original URL
       // This proves the redirect is working correctly
+      console.log(`✅ TEST RESULT: Location Header = ${res.headers.location}`);
+      console.log(`✅ TEST RESULT: Expected Original URL = ${testUrl}`);
+      console.log(`✅ TEST RESULT: Redirect works correctly - user will be sent to ${testUrl}`);
       expect(res.headers.location).toBe(testUrl);
     });
 
@@ -120,6 +124,7 @@ describe('URL Shortener API', () => {
         .get(`/${code}`)
         .redirects(0);
 
+      console.log(`✅ SPECIAL CHAR TEST: HTTP ${redirectRes.status} - Redirecting to: ${redirectRes.headers.location}`);
       expect(redirectRes.status).toBe(301);
       expect(redirectRes.headers.location).toBe(specialUrl);
     });
@@ -150,6 +155,7 @@ describe('URL Shortener API', () => {
         .get(`/${shortCode}`)
         .redirects(0);
 
+      console.log(`✅ REDIRECT TEST: HTTP ${redirectRes.status} - Redirecting to: ${redirectRes.headers.location}`);
       expect(redirectRes.status).toBe(301);
       expect(redirectRes.headers.location).toBe(longUrl);
     });
