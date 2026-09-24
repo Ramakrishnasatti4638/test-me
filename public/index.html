@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>URL Shortener</title>
   <style>
     * {
@@ -223,7 +224,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>🔗 URL Shortener</h1>
+    <h1>&#128279; URL Shortener</h1>
     <p class="subtitle">Paste your long URL below to create a short link</p>
 
     <div class="input-group">
@@ -247,8 +248,8 @@
       <div class="result-label">Short URL</div>
       <div class="result-value" id="shortUrl"></div>
       <div class="button-group">
-        <button class="copy-btn" id="copyBtn">📋 Copy Short URL</button>
-        <button class="test-redirect-btn" id="testRedirectBtn">🧪 Test Redirect</button>
+        <button class="copy-btn" id="copyBtn">&#128203; Copy Short URL</button>
+        <button class="test-redirect-btn" id="testRedirectBtn">&#128498; Test Redirect</button>
       </div>
       <div class="copy-status" id="copyStatus">✓ Copied to clipboard!</div>
     </div>
@@ -296,33 +297,65 @@
         loadingDiv.classList.remove('show');
         copyStatus.classList.remove('show');
         copyBtn.classList.remove('copied');
-        copyBtn.textContent = '📋 Copy Short URL';
+        copyBtn.textContent = '&#128203; Copy Short URL';
       } catch (error) {
         showError('An error occurred. Please try again.');
         loadingDiv.classList.remove('show');
       }
     });
 
-    copyBtn.addEventListener('click', () => {
+    copyBtn.addEventListener('click', async () => {
       const shortUrl = shortUrlDiv.textContent;
-      navigator.clipboard.writeText(shortUrl).then(() => {
+      let copied = false;
+
+      // Try modern clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(shortUrl);
+          copied = true;
+        } catch (err) {
+          console.log('Clipboard API failed, trying fallback');
+        }
+      }
+
+      // Fallback method for non-secure contexts or clipboard API failure
+      if (!copied) {
+        try {
+          const textArea = document.createElement('textarea');
+          textArea.value = shortUrl;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          copied = true;
+        } catch (err) {
+          console.log('Fallback copy failed');
+        }
+      }
+
+      if (copied) {
         copyBtn.textContent = '✓ Copied!';
         copyBtn.classList.add('copied');
         copyStatus.classList.add('show');
+        errorDiv.classList.remove('show');
         
         setTimeout(() => {
-          copyBtn.textContent = '📋 Copy Short URL';
+          copyBtn.textContent = '&#128203; Copy Short URL';
           copyBtn.classList.remove('copied');
           copyStatus.classList.remove('show');
         }, 3000);
-      }).catch(() => {
+      } else {
         showError('Failed to copy to clipboard');
-      });
+      }
     });
 
     testRedirectBtn.addEventListener('click', () => {
       const shortUrl = shortUrlDiv.textContent;
       if (shortUrl) {
+        // Extract just the short code and navigate
         window.location.href = shortUrl;
       }
     });
