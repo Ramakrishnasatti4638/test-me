@@ -184,7 +184,7 @@
     <div id="result-box" class="result-box">
       <p class="result-label">Your short link</p>
       <div class="result-row">
-        <a id="short-link" class="short-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <a id="short-link" class="short-link" href="#"></a>
         <button class="copy-btn" id="copy-btn">Copy</button>
       </div>
     </div>
@@ -243,7 +243,7 @@
         data.forEach(({ shortUrl, originalUrl }) => {
           const li = document.createElement('li');
           li.innerHTML = `
-            <a class="list-short" href="${shortUrl}" target="_blank" rel="noopener noreferrer">${shortUrl}</a>
+            <a class="list-short" href="${shortUrl}">${shortUrl}</a>
             <span class="list-original" title="${originalUrl}">${originalUrl}</span>
           `;
           urlList.appendChild(li);
