@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnapURL — URL Shortener</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="/" class="brand">
+      <span class="brand-logo">⚡</span>
+      <span class="brand-name">SnapURL</span>
+    </a>
+    <nav>
+      <a href="#shorten">Shorten</a>
+      <a href="#links">My links</a>
+      <a href="/api/links" target="_blank" rel="noopener">API</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Shorten links. Track clicks. <span class="accent">Done.</span></h1>
+      <p class="lede">Paste any long URL and get a clean, shareable short link in a snap.</p>
+    </section>
+
+    <section id="shorten" class="card">
+      <form id="shorten-form">
+        <div class="field">
+          <label for="url">Destination URL</label>
+          <input
+            id="url"
+            name="url"
+            type="url"
+            placeholder="https://example.com/very/long/url/that/you/want/to/shorten"
+            autocomplete="off"
+            required
+          />
+        </div>
+
+        <div class="field row">
+          <div class="grow">
+            <label for="slug">
+              Custom alias <span class="hint">(optional)</span>
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              type="text"
+              placeholder="my-link"
+              autocomplete="off"
+              pattern="[A-Za-z0-9_-]{3,32}"
+              title="3-32 characters: letters, numbers, hyphen or underscore"
+            />
+          </div>
+          <button class="btn primary" type="submit">Shorten</button>
+        </div>
+
+        <p id="error" class="error" role="alert" hidden></p>
+      </form>
+
+      <div id="result" class="result" hidden>
+        <div class="result-row">
+          <span class="label">Short link</span>
+          <a id="result-link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+        <div class="result-row muted">
+          <span class="label">Original</span>
+          <span id="result-original" class="ellipsis"></span>
+        </div>
+        <div class="result-actions">
+          <button id="copy-btn" class="btn" type="button">Copy</button>
+          <button id="visit-btn" class="btn" type="button">Open</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="links" class="card">
+      <div class="card-head">
+        <h2>Your links</h2>
+        <button id="refresh-btn" class="btn ghost" type="button">Refresh</button>
+      </div>
+      <div id="links-empty" class="empty">No links yet. Shorten one above to get started.</div>
+      <table id="links-table" hidden>
+        <thead>
+          <tr>
+            <th>Short link</th>
+            <th>Destination</th>
+            <th>Created</th>
+            <th>Clicks</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="links-body"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>SnapURL · local URL shortener</span>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
