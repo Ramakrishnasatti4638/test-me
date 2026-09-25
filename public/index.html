@@ -119,20 +119,31 @@
 
     .result-content {
       display: flex;
+      flex-direction: column;
       gap: 10px;
       margin-bottom: 15px;
     }
 
     .result-url {
-      flex: 1;
-      padding: 10px 12px;
+      padding: 12px 15px;
       background: white;
-      border: 1px solid #ddd;
+      border: 2px solid #667eea;
       border-radius: 6px;
-      word-break: break-all;
+      word-break: break-word;
+      word-wrap: break-word;
       font-size: 14px;
       color: #667eea;
-      font-weight: 500;
+      font-weight: 600;
+      line-height: 1.5;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .result-url:hover {
+      background-color: #f0f0ff;
     }
 
     .copy-btn {
@@ -145,6 +156,7 @@
       font-weight: 600;
       font-size: 12px;
       white-space: nowrap;
+      width: 100%;
     }
 
     .copy-btn:hover {
@@ -153,13 +165,22 @@
 
     .copied-message {
       color: #22c55e;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 600;
       display: none;
+      margin-top: 10px;
+      text-align: center;
     }
 
     .copied-message.show {
-      display: inline-block;
+      display: block;
+      animation: fadeInOut 2s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { opacity: 0; }
     }
 
     .error {
@@ -267,8 +288,15 @@
       }
     });
 
+    resultUrl.addEventListener('click', () => {
+      const url = resultUrl.textContent.trim();
+      if (url.startsWith('http')) {
+        window.open(url, '_blank');
+      }
+    });
+
     copyBtn.addEventListener('click', () => {
-      const url = resultUrl.textContent;
+      const url = resultUrl.textContent.trim();
       navigator.clipboard.writeText(url).then(() => {
         copiedMessage.classList.add('show');
         setTimeout(() => {
