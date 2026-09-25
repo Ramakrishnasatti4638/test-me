@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🔗 URL Shortener</h1>
+      <p>Create short, shareable links in seconds</p>
+    </header>
+
+    <main class="main-content">
+      <!-- Input Section -->
+      <section class="input-section">
+        <div class="input-group">
+          <input
+            type="url"
+            id="urlInput"
+            placeholder="Enter your long URL here (e.g., https://example.com/very/long/path)"
+            class="url-input"
+          >
+          <button id="shortenBtn" class="btn btn-primary">Shorten URL</button>
+        </div>
+        <div id="errorMessage" class="error-message"></div>
+      </section>
+
+      <!-- Results Section -->
+      <section class="results-section" id="resultsSection" style="display: none;">
+        <div class="result-card">
+          <div class="result-item">
+            <label>Original URL:</label>
+            <div class="result-value" id="originalUrl"></div>
+          </div>
+
+          <div class="result-item">
+            <label>Short URL:</label>
+            <div class="result-value-with-action">
+              <input
+                type="text"
+                id="shortUrlInput"
+                class="result-value-input"
+                readonly
+              >
+              <button id="copyBtn" class="btn btn-secondary">Copy</button>
+            </div>
+          </div>
+
+          <div class="result-stats">
+            <div class="stat">
+              <span class="stat-label">Created:</span>
+              <span id="createdAt" class="stat-value"></span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Clicks:</span>
+              <span id="clicksCount" class="stat-value">0</span>
+            </div>
+          </div>
+
+          <button id="newUrlBtn" class="btn btn-secondary full-width">Shorten Another URL</button>
+        </div>
+      </section>
+
+      <!-- History Section -->
+      <section class="history-section">
+        <h2>Recent Shortened URLs</h2>
+        <div id="urlHistory" class="url-list"></div>
+        <div id="emptyState" class="empty-state">
+          No URLs shortened yet
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2024 URL Shortener. Made with ❤️</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
