@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+            width: auto;
+        }
+
+        .remember-me label {
+            margin: 0;
+            color: #666;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            padding: 10px;
+            background: #d5f4e6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <div class="success-message" id="successMessage">Login successful!</div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    placeholder="Enter your email"
+                >
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    placeholder="Enter your password"
+                >
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe">Remember me</label>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <div class="signup-link">
+            Don't have an account? <a href="#signup">Sign up here</a>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+        const successMessage = document.getElementById('successMessage');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        // Load saved email if "Remember me" was checked
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('savedEmail');
+            if (savedEmail) {
+                emailInput.value = savedEmail;
+                rememberMeCheckbox.checked = true;
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Clear previous errors
+            emailError.style.display = 'none';
+            passwordError.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            let hasError = false;
+
+            // Validation
+            if (!email) {
+                emailError.textContent = 'Email is required';
+                emailError.style.display = 'block';
+                hasError = true;
+            } else if (!isValidEmail(email)) {
+                emailError.textContent = 'Please enter a valid email';
+                emailError.style.display = 'block';
+                hasError = true;
+            }
+
+            if (!password) {
+                passwordError.textContent = 'Password is required';
+                passwordError.style.display = 'block';
+                hasError = true;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters';
+                passwordError.style.display = 'block';
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Save email if "Remember me" is checked
+            if (rememberMeCheckbox.checked) {
+                localStorage.setItem('savedEmail', email);
+            } else {
+                localStorage.removeItem('savedEmail');
+            }
+
+            // Show success message
+            successMessage.style.display = 'block';
+            
+            // Reset form
+            form.reset();
+            rememberMeCheckbox.checked = false;
+
+            // Simulate login (in a real app, you'd send this to a server)
+            console.log('Login attempt:', { email, password });
+        });
+
+        // Email validation helper
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Clear error messages on input
+        emailInput.addEventListener('focus', () => {
+            emailError.style.display = 'none';
+        });
+
+        passwordInput.addEventListener('focus', () => {
+            passwordError.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
