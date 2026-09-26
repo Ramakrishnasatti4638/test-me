@@ -1,15 +1,16 @@
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
     const remember = document.getElementById('remember').checked;
     const messageEl = document.getElementById('message');
     
     // Simple validation
     if (!email || !password) {
-        messageEl.textContent = 'Please fill in all fields';
+        messageEl.textContent = 'Please fill out this field.';
         messageEl.className = 'message error';
+        messageEl.style.display = 'block';
         return;
     }
     
@@ -18,12 +19,14 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     if (!emailRegex.test(email)) {
         messageEl.textContent = 'Please enter a valid email';
         messageEl.className = 'message error';
+        messageEl.style.display = 'block';
         return;
     }
     
     // Simulate login success
     messageEl.textContent = `Welcome back! Logged in as ${email}`;
     messageEl.className = 'message success';
+    messageEl.style.display = 'block';
     
     // Store remember me preference
     if (remember) {
