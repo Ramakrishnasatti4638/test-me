@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result-item {
+      margin-bottom: 15px;
+    }
+
+    .result-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .result-label {
+      color: #666;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .result-value {
+      color: #333;
+      font-size: 14px;
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-value input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      background: white;
+      margin: 0;
+      cursor: text;
+    }
+
+    .copy-btn {
+      width: auto;
+      padding: 6px 12px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .stats {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .stat-label {
+      color: #666;
+    }
+
+    .stat-value {
+      color: #333;
+      font-weight: 600;
+    }
+
+    .error {
+      color: #e74c3c;
+      padding: 12px;
+      background: #fadbd8;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .success {
+      color: #27ae60;
+      padding: 12px;
+      background: #d5f4e6;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .success.show {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>URL Shortener</h1>
+    <p class="subtitle">Create short, shareable links</p>
+
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
+
+    <div class="form-group">
+      <label for="urlInput">Enter your URL</label>
+      <input
+        type="text"
+        id="urlInput"
+        placeholder="https://example.com/very/long/url"
+        autocomplete="off"
+      />
+    </div>
+
+    <button id="shortenBtn">Shorten URL</button>
+
+    <div class="result" id="result">
+      <div class="result-item">
+        <div class="result-label">Short URL</div>
+        <div class="result-value">
+          <input
+            type="text"
+            id="shortUrlValue"
+            readonly
+            onclick="this.select()"
+          />
+          <button class="copy-btn" onclick="copyToClipboard('shortUrlValue')">Copy</button>
+        </div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-label">Original URL</div>
+        <div class="result-value">
+          <input
+            type="text"
+            id="originalUrlValue"
+            readonly
+            onclick="this.select()"
+          />
+          <button class="copy-btn" onclick="copyToClipboard('originalUrlValue')">Copy</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-row">
+          <span class="stat-label">Clicks:</span>
+          <span class="stat-value" id="clickCount">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Created:</span>
+          <span class="stat-value" id="createdTime">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlInput = document.getElementById('urlInput');
+    const shortenBtn = document.getElementById('shortenBtn');
+    const resultDiv = document.getElementById('result');
+    const errorDiv = document.getElementById('error');
+    const successDiv = document.getElementById('success');
+
+    shortenBtn.addEventListener('click', shortenUrl);
+    urlInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') shortenUrl();
+    });
+
+    async function shortenUrl() {
+      const url = urlInput.value.trim();
+
+      if (!url) {
+        showError('Please enter a URL');
+        return;
+      }
+
+      shortenBtn.disabled = true;
+      hideError();
+      hideSuccess();
+
+      try {
+        const response = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError(data.error || 'Failed to shorten URL');
+          return;
+        }
+
+        displayResult(data);
+        showSuccess('URL shortened successfully!');
+      } catch (err) {
+        showError('Error: ' + err.message);
+      } finally {
+        shortenBtn.disabled = false;
+      }
+    }
+
+    async function displayResult(data) {
+      document.getElementById('shortUrlValue').value = data.shortUrl;
+      document.getElementById('originalUrlValue').value = data.originalUrl;
+
+      // Fetch stats
+      try {
+        const statsResponse = await fetch(`/api/stats/${data.shortCode}`);
+        const stats = await statsResponse.json();
+
+        if (statsResponse.ok) {
+          document.getElementById('clickCount').textContent = stats.clicks;
+          const date = new Date(stats.created_at);
+          document.getElementById('createdTime').textContent = date.toLocaleString();
+        }
+      } catch (err) {
+        console.error('Failed to fetch stats:', err);
+      }
+
+      resultDiv.classList.add('show');
+    }
+
+    function copyToClipboard(elementId) {
+      const element = document.getElementById(elementId);
+      element.select();
+      document.execCommand('copy');
+
+      showSuccess('Copied to clipboard!');
+    }
+
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+    }
+
+    function hideError() {
+      errorDiv.classList.remove('show');
+    }
+
+    function showSuccess(message) {
+      successDiv.textContent = message;
+      successDiv.classList.add('show');
+      setTimeout(() => hideSuccess(), 3000);
+    }
+
+    function hideSuccess() {
+      successDiv.classList.remove('show');
+    }
+
+    // Focus on input when page loads
+    urlInput.focus();
+  </script>
+</body>
+</html>
