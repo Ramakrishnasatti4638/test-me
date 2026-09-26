@@ -1,0 +1,154 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --error: #dc2626;
+  --bg-start: #6366f1;
+  --bg-end: #8b5cf6;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+  padding: 1rem;
+  color: var(--text);
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card {
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.login-subtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+  margin: 0.5rem 0 1.75rem;
+}
+
+.field {
+  margin-bottom: 1.25rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.field input.invalid {
+  border-color: var(--error);
+}
+
+.error {
+  display: block;
+  color: var(--error);
+  font-size: 0.78rem;
+  margin-top: 0.35rem;
+  min-height: 1rem;
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.forgot {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit-btn:hover {
+  background: var(--primary-hover);
+}
+
+.submit-btn:active {
+  transform: translateY(1px);
+}
+
+.signup {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 1.5rem;
+}
+
+.signup a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup a:hover {
+  text-decoration: underline;
+}
