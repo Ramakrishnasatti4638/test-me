@@ -339,10 +339,24 @@
 
     function copyToClipboard(elementId) {
       const element = document.getElementById(elementId);
-      element.select();
-      document.execCommand('copy');
+      const text = element.value;
 
-      showSuccess('Copied to clipboard!');
+      // Use modern Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showSuccess('Copied to clipboard!');
+        }).catch(() => {
+          // Fallback to old method
+          element.select();
+          document.execCommand('copy');
+          showSuccess('Copied to clipboard!');
+        });
+      } else {
+        // Fallback for older browsers
+        element.select();
+        document.execCommand('copy');
+        showSuccess('Copied to clipboard!');
+      }
     }
 
     function showError(message) {
@@ -357,7 +371,7 @@
     function showSuccess(message) {
       successDiv.textContent = message;
       successDiv.classList.add('show');
-      setTimeout(() => hideSuccess(), 3000);
+      setTimeout(() => hideSuccess(), 4000);
     }
 
     function hideSuccess() {
