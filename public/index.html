@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickLink — Modern URL Shortener</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">QuickLink</span>
+        <span class="badge">v1.0</span>
+      </div>
+      <p class="tagline">Shorten links, generate QR codes, and monitor click analytics in real-time.</p>
+    </header>
+
+    <main class="main-content">
+      <!-- Create Short URL Card -->
+      <section class="card shorten-card">
+        <h2 class="card-title">Shorten a Long Link</h2>
+        <form id="shortenForm" class="shorten-form">
+          <div class="input-group">
+            <label for="urlInput">Destination URL <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔗</span>
+              <input 
+                type="url" 
+                id="urlInput" 
+                placeholder="https://example.com/very-long-link-to-shorten" 
+                required 
+                autocomplete="off"
+              >
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="titleInput">Title / Note (optional)</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🏷️</span>
+                <input 
+                  type="text" 
+                  id="titleInput" 
+                  placeholder="e.g. Portfolio project, Docs"
+                  maxlength="100"
+                >
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="customCodeInput">Custom Alias (optional)</label>
+              <div class="input-wrapper">
+                <span class="input-icon">✨</span>
+                <input 
+                  type="text" 
+                  id="customCodeInput" 
+                  placeholder="e.g. my-custom-link" 
+                  pattern="[a-zA-Z0-9_-]{3,20}" 
+                  title="3-20 characters: alphanumeric, underscores, hyphens"
+                >
+              </div>
+            </div>
+          </div>
+
+          <div id="alertBox" class="alert hidden"></div>
+
+          <button type="submit" id="submitBtn" class="primary-btn">
+            <span class="btn-text">Shorten URL</span>
+            <span class="btn-loader hidden"></span>
+          </button>
+        </form>
+
+        <!-- Result Box -->
+        <div id="resultBox" class="result-box hidden">
+          <div class="result-header">
+            <h3>🎉 Your link is ready!</h3>
+          </div>
+          <div class="result-body">
+            <div class="result-details">
+              <label>Shortened Link:</label>
+              <div class="copy-box">
+                <input type="text" id="shortUrlDisplay" readonly>
+                <button type="button" id="copyBtn" class="copy-btn">
+                  <span class="copy-icon">📋</span> Copy
+                </button>
+                <a id="visitBtn" href="#" target="_blank" class="visit-btn" title="Open short URL">
+                  ↗ Open
+                </a>
+              </div>
+
+              <div class="link-meta">
+                <span id="resultOriginalUrl" class="text-truncate"></span>
+              </div>
+            </div>
+
+            <div class="qr-container">
+              <label>QR Code:</label>
+              <div class="qr-image-wrapper">
+                <img id="qrCodeImg" alt="QR Code" width="130" height="130">
+              </div>
+              <a id="downloadQrBtn" href="#" download="qr-code.png" class="download-link">⬇ Download QR</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Overview Bar -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Total Links</span>
+          <span id="totalLinksCount" class="metric-value">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total Clicks</span>
+          <span id="totalClicksCount" class="metric-value">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Active Database</span>
+          <span class="metric-value status-active">SQLite WAL</span>
+        </div>
+      </section>
+
+      <!-- Manage URLs Table Card -->
+      <section class="card table-card">
+        <div class="table-header-row">
+          <h2 class="card-title">Recent Links</h2>
+          <button id="refreshBtn" class="secondary-btn" title="Refresh link list">
+            🔄 Refresh
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="url-table">
+            <thead>
+              <tr>
+                <th>Short Link & Title</th>
+                <th>Destination</th>
+                <th>Clicks</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="urlTableBody">
+              <tr>
+                <td colspan="5" class="empty-state">Loading links...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal for Detailed Click Stats -->
+    <div id="statsModal" class="modal-backdrop hidden">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3 id="modalTitle">Link Analytics</h3>
+          <button id="closeModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-summary">
+            <div>
+              <label>Short Link</label>
+              <p id="modalShortUrl" class="mono"></p>
+            </div>
+            <div>
+              <label>Destination</label>
+              <p id="modalDestUrl" class="text-truncate"></p>
+            </div>
+            <div>
+              <label>Total Clicks</label>
+              <p id="modalClickCount" class="big-stat">0</p>
+            </div>
+          </div>
+
+          <h4>Recent Click Logs</h4>
+          <div class="logs-container">
+            <table class="logs-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Referer</th>
+                  <th>User Agent</th>
+                </tr>
+              </thead>
+              <tbody id="modalLogsBody">
+                <tr><td colspan="3">No clicks recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>QuickLink URL Shortener &bull; High performance SQLite &amp; Node.js backend</p>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
