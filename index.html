@@ -145,6 +145,21 @@
             display: block;
         }
 
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 padding: 30px 20px;
@@ -163,6 +178,8 @@
             <p>Sign in to your account</p>
         </div>
 
+        <div class="success-message" id="successMessage">Login successful!</div>
+
         <form id="loginForm">
             <div class="form-group">
                 <label for="email">Email Address</label>
@@ -170,8 +187,7 @@
                     type="email" 
                     id="email" 
                     name="email" 
-                    placeholder="you@example.com" 
-                    required
+                    placeholder="you@example.com"
                 >
                 <div class="error-message" id="emailError"></div>
             </div>
@@ -182,8 +198,7 @@
                     type="password" 
                     id="password" 
                     name="password" 
-                    placeholder="Enter your password" 
-                    required
+                    placeholder="Enter your password"
                 >
                 <div class="error-message" id="passwordError"></div>
             </div>
@@ -210,13 +225,15 @@
         const passwordInput = document.getElementById('password');
         const emailError = document.getElementById('emailError');
         const passwordError = document.getElementById('passwordError');
+        const successMessage = document.getElementById('successMessage');
 
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Clear previous errors
+            // Clear previous errors and success message
             emailError.classList.remove('show');
             passwordError.classList.remove('show');
+            successMessage.classList.remove('show');
 
             let isValid = true;
 
@@ -243,7 +260,8 @@
             }
 
             if (isValid) {
-                alert('Login successful! (This is a demo)\n\nEmail: ' + emailInput.value);
+                successMessage.textContent = 'Login successful! Welcome ' + emailInput.value;
+                successMessage.classList.add('show');
                 loginForm.reset();
             }
         });
