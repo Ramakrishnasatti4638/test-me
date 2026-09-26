@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shortener — URL Shortener</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔗%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">🔗</span>
+        <span class="brand-name">Shortener</span>
+      </div>
+      <a class="github" href="https://github.com" target="_blank" rel="noopener">View source</a>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <h1>Shorten links. Track clicks.</h1>
+        <p class="lede">
+          Paste a long URL, get a short one. Every link tracks clicks so you can see what works.
+        </p>
+      </section>
+
+      <section class="card form-card">
+        <form id="shorten-form" autocomplete="off">
+          <div class="field">
+            <label for="url">Long URL</label>
+            <input
+              id="url"
+              name="url"
+              type="url"
+              placeholder="https://example.com/some/very/long/path?with=query"
+              required
+            />
+          </div>
+
+          <div class="field-row">
+            <div class="field grow">
+              <label for="code">
+                Custom alias <span class="hint">(optional)</span>
+              </label>
+              <div class="custom-code">
+                <span class="prefix" id="host-prefix"></span>
+                <input
+                  id="code"
+                  name="code"
+                  type="text"
+                  placeholder="my-link"
+                  maxlength="32"
+                  pattern="[A-Za-z0-9_-]{1,32}"
+                />
+              </div>
+            </div>
+            <button type="submit" class="btn primary">
+              <span class="btn-label">Shorten</span>
+            </button>
+          </div>
+
+          <p class="error" id="form-error" role="alert" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="result hidden" id="result-section">
+        <div class="card result-card">
+          <div class="result-row">
+            <div class="result-text">
+              <div class="result-label">Your short link</div>
+              <a id="result-link" class="result-link" href="#" target="_blank" rel="noopener"></a>
+              <div class="result-target" id="result-target"></div>
+            </div>
+            <button class="btn ghost" id="copy-btn" type="button">
+              <span id="copy-label">Copy</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="links-section">
+        <div class="section-header">
+          <h2>Your links</h2>
+          <button id="refresh-btn" class="btn ghost small" type="button">Refresh</button>
+        </div>
+        <div id="links-list" class="links-list">
+          <div class="empty" id="empty-state">
+            No links yet. Shorten one above to get started.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Built with Node.js, Express & SQLite.</span>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
