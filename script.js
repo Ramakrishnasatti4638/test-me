@@ -23,7 +23,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     
     // Simulate login process
     console.log('Login attempt:', { email, password, remember });
-    showSuccess('Login successful! Welcome back.');
+    showSuccess('Login successful!! Welcome back.');
     
     // Clear form after successful login
     setTimeout(() => {
