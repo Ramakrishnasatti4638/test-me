@@ -23,6 +23,19 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Map well-known body-parser errors to the correct HTTP status + envelope.
+  // body-parser sets `err.type` on these — see its source for the full list.
+  if (err && err.type === 'entity.too.large') {
+    return res.status(413).json({
+      error: { code: 'PAYLOAD_TOO_LARGE', message: 'Request body is too large.' },
+    });
+  }
+  if (err && err.type === 'entity.parse.failed') {
+    return res.status(400).json({
+      error: { code: 'BAD_JSON', message: 'Request body is not valid JSON.' },
+    });
+  }
+
   // eslint-disable-next-line no-console
   console.error('[unhandled]', err);
   return res.status(500).json({
