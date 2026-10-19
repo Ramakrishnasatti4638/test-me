@@ -32,6 +32,12 @@ npm test
 
 ## Endpoints
 
+#### Health
+
+| Method | Path     | Body | Response               |
+|--------|----------|------|------------------------|
+| GET    | /health  | —    | `200` `{ "status": "ok" }` |
+
 #### Users
 
 | Method | Path        | Body                            | Response                          |
