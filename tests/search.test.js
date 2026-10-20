@@ -8,6 +8,11 @@ test('searchProducts returns 3 products for "laptop"', () => {
   assert.equal(results.length, 3);
 });
 
+test('searchProducts returns 3 products for "Laptop" (case-insensitive)', () => {
+  const results = searchProducts(products, 'Laptop');
+  assert.equal(results.length, 3);
+});
+
 test('searchProducts returns 1 product for "mouse"', () => {
   const results = searchProducts(products, 'mouse');
   assert.equal(results.length, 1);
