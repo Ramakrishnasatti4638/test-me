@@ -36,6 +36,7 @@ describe('ProductDetailsPage', () => {
           name: 'Sample Product',
           price: 1299,
           description: 'A great product.',
+          lastUpdated: '2024-05-01',
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       ),
@@ -48,6 +49,27 @@ describe('ProductDetailsPage', () => {
     });
     expect(screen.getByText('$1,299.00')).toBeInTheDocument();
     expect(screen.getByText('A great product.')).toBeInTheDocument();
+  });
+
+  it('renders the "Updated <date>" line for a product', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 1,
+          name: 'Sample Product',
+          price: 1299,
+          description: 'A great product.',
+          lastUpdated: '2024-05-01',
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ),
+    );
+
+    renderDetails('1');
+
+    await waitFor(() => {
+      expect(screen.getByText('Updated 2024-05-01')).toBeInTheDocument();
+    });
   });
 
   it('shows "Product not found" on a 404', async () => {

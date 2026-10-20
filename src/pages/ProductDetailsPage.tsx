@@ -53,6 +53,7 @@ export function ProductDetailsPage() {
       <h1>{product.name}</h1>
       <p>{formatted}</p>
       <p>{product.description}</p>
+      <p>Updated {product.lastUpdated}</p>
     </article>
   );
 }

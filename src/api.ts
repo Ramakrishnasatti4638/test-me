@@ -3,6 +3,7 @@ export interface Product {
   name: string;
   price: number;
   description: string;
+  lastUpdated: string;
 }
 
 const API_BASE_URL: string =
