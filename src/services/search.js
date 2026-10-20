@@ -1,5 +1,6 @@
 export function searchProducts(products, query) {
+  const q = query.toLocaleLowerCase();
   return products.filter((product) =>
-    product.name.toLowerCase().includes(query)
+    product.name.toLocaleLowerCase().includes(q)
   );
 }
