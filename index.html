@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app__header">
+      <h1 class="app__title">Todo</h1>
+      <p class="app__subtitle">Stay organized. Get things done.</p>
+    </header>
+
+    <section class="todo">
+      <form class="todo__form" id="todo-form" autocomplete="off">
+        <input
+          class="todo__input"
+          id="todo-input"
+          type="text"
+          placeholder="What needs to be done?"
+          aria-label="New todo"
+          maxlength="200"
+          required
+        />
+        <button class="todo__add" type="submit" aria-label="Add todo">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="todo__toolbar" role="tablist" aria-label="Filter todos">
+        <button class="filter is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="filter" data-filter="active" role="tab" aria-selected="false">Active</button>
+        <button class="filter" data-filter="completed" role="tab" aria-selected="false">Completed</button>
+      </div>
+
+      <ul class="todo__list" id="todo-list" aria-live="polite"></ul>
+
+      <div class="todo__empty" id="todo-empty" hidden>
+        <p>No todos here. Add one above to get started.</p>
+      </div>
+
+      <footer class="todo__footer" id="todo-footer" hidden>
+        <span class="todo__count" id="todo-count">0 items left</span>
+        <button class="todo__clear" id="todo-clear" type="button">Clear completed</button>
+      </footer>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
