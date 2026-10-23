@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Todo App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app__header">
+      <h1 class="app__title">Todos</h1>
+      <p class="app__subtitle">Stay focused. Get things done.</p>
+    </header>
+
+    <form id="todo-form" class="todo-form" autocomplete="off">
+      <input
+        id="todo-input"
+        class="todo-form__input"
+        type="text"
+        placeholder="What needs to be done?"
+        aria-label="New todo"
+        maxlength="200"
+        required
+      />
+      <button type="submit" class="todo-form__submit" aria-label="Add todo">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </form>
+
+    <section class="todo-card" aria-live="polite">
+      <ul id="todo-list" class="todo-list" role="list"></ul>
+
+      <div id="empty-state" class="empty-state" hidden>
+        <p>Nothing here yet. Add your first todo above.</p>
+      </div>
+
+      <div class="todo-footer">
+        <span id="items-left" class="todo-footer__count">0 items left</span>
+
+        <div class="filters" role="tablist" aria-label="Filter todos">
+          <button class="filter is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+          <button class="filter" data-filter="active" role="tab" aria-selected="false">Active</button>
+          <button class="filter" data-filter="completed" role="tab" aria-selected="false">Completed</button>
+        </div>
+
+        <button id="clear-completed" class="todo-footer__clear" type="button">Clear completed</button>
+      </div>
+    </section>
+
+    <footer class="app__hint">Tip: press Enter to add. Click the circle to complete.</footer>
+  </main>
+
+  <template id="todo-item-template">
+    <li class="todo-item">
+      <label class="todo-item__check">
+        <input type="checkbox" class="todo-item__checkbox" />
+        <span class="todo-item__checkmark" aria-hidden="true"></span>
+      </label>
+      <span class="todo-item__text"></span>
+      <button class="todo-item__delete" type="button" aria-label="Delete todo">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
