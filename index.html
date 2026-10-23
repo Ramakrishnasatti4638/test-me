@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo App</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-title">
+        <h1>Tasks</h1>
+        <p class="subtitle" id="date-display">Today's todos</p>
+      </div>
+      <div class="stats-badge" id="stats-badge">
+        <span id="active-count">0</span> left
+      </div>
+    </header>
+
+    <section class="add-todo-section">
+      <form id="todo-form">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="todo-input"
+            placeholder="Add a new task..."
+            autocomplete="off"
+            required
+            aria-label="New task input"
+          >
+          <button type="submit" id="add-btn" aria-label="Add task">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="filters-section">
+      <div class="filters" role="tablist" aria-label="Todo filters">
+        <button type="button" class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button type="button" class="filter-btn" data-filter="active" role="tab" aria-selected="false">Active</button>
+        <button type="button" class="filter-btn" data-filter="completed" role="tab" aria-selected="false">Completed</button>
+      </div>
+      <button type="button" id="clear-completed-btn" class="clear-btn" aria-label="Clear completed tasks">Clear completed</button>
+    </section>
+
+    <main class="todos-main">
+      <ul id="todo-list" class="todo-list" aria-label="Todo list"></ul>
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">✓</div>
+        <p class="empty-text">No tasks found</p>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <span id="total-summary">0 tasks total</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
