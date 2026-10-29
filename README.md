@@ -10,7 +10,6 @@ survives a page reload.
 - Mark a todo complete by clicking the circle or the text
 - Delete a todo with the **×** button
 - Filter by **All**, **Active**, or **Completed**
-- **Clear completed** button (disabled when there is nothing to clear)
 - Live "N items left" counter
 - Persisted to `localStorage` — survives reloads
 - Light/dark theme that follows your OS setting
@@ -46,5 +45,5 @@ npm test
 
 The suite mounts the real `index.html` + `app.js` in jsdom and covers adding,
 trimming, blank-input rejection, XSS-safe rendering, toggling, filtering,
-deleting, clearing completed, the counter, `localStorage` persistence across a
+deleting, the counter, `localStorage` persistence across a
 reload, corrupt/malformed stored data, and keyboard accessibility.

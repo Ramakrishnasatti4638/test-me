@@ -13,7 +13,6 @@
   const list = document.getElementById("todo-list");
   const emptyState = document.getElementById("empty-state");
   const counter = document.getElementById("counter");
-  const clearBtn = document.getElementById("clear-completed");
   const filterButtons = document.querySelectorAll(".filter");
 
   // ---------- Persistence ----------
@@ -84,7 +83,6 @@
     const remaining = todos.filter((t) => !t.completed).length;
     counter.textContent =
       remaining === 1 ? "1 item left" : remaining + " items left";
-    clearBtn.disabled = !todos.some((t) => t.completed);
   }
 
   function renderItem(todo) {
@@ -156,14 +154,6 @@
     render();
   }
 
-  function clearCompleted() {
-    const hasCompleted = todos.some((t) => t.completed);
-    if (!hasCompleted) return;
-    todos = todos.filter((t) => !t.completed);
-    saveTodos();
-    render();
-  }
-
   function setFilter(next) {
     if (!VALID_FILTERS.includes(next) || next === filter) return;
     filter = next;
@@ -187,8 +177,6 @@
   for (const btn of filterButtons) {
     btn.addEventListener("click", () => setFilter(btn.dataset.filter));
   }
-
-  clearBtn.addEventListener("click", clearCompleted);
 
   // ---------- Init ----------
 

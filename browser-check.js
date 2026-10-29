@@ -57,11 +57,6 @@ const path = require("path");
   await page.locator(".todo-item").nth(2).hover();
   await page.locator(".todo-item").nth(2).locator(".delete-btn").click();
   console.log("\nitems after delete:", await page.locator(".todo-item").count());
-
-  // Clear completed
-  await page.click("#clear-completed");
-  console.log("items after clear completed:", await page.locator(".todo-item").count());
-  console.log("clear button disabled:", await page.locator("#clear-completed").isDisabled());
   await page.screenshot({ path: "screenshot-final.png" });
 
   // Dark mode

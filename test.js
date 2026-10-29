@@ -195,32 +195,9 @@ section("Deleting the last todo shows empty state");
   assert(app.$("#counter").textContent === "0 items left", "counter shows 0 items left");
 }
 
-// -------------------------------------------------------- clear completed
-section("Clear completed");
-{
-  const app = createApp();
-  app.add("To be completed");
-  app.add("To stay active");
-  app.click(".todo-checkbox"); // complete the first one
-
-  const clearBtn = app.$("#clear-completed");
-  assert(clearBtn.disabled === false, "clear-completed enabled when a completed todo exists");
-  clearBtn.dispatchEvent(new app.window.Event("click", { bubbles: true }));
-  assert(app.items().length === 1, "only the completed todo was cleared");
-  assert(app.texts()[0] === "To stay active", "the active todo survives clearing completed");
-  assert(app.$("#counter").textContent === "1 item left", "counter shows 1 item left");
-  assert(clearBtn.disabled === true, "clear-completed disabled when nothing completed");
-}
-
-section("Clear completed with nothing completed is a no-op");
-{
-  const app = createApp();
-  app.add("Active one");
-  const clearBtn = app.$("#clear-completed");
-  assert(clearBtn.disabled === true, "clear-completed disabled with no completed todos");
-  clearBtn.dispatchEvent(new app.window.Event("click", { bubbles: true }));
-  assert(app.items().length === 1, "no todos removed");
-}
+// -------------------------------------------------------- clearing completed
+// Completed todos are removed individually via the per-row × button
+// (verified in the "Deleting a todo" section), so no bulk action is needed.
 
 // ------------------------------------------------------------ persistence
 section("Persistence in localStorage");
