@@ -1,0 +1,12 @@
+{
+  "name": "simple-todo-app",
+  "version": "1.0.0",
+  "description": "A simple todo app with localStorage persistence, built with vanilla HTML/CSS/JS.",
+  "private": true,
+  "scripts": {
+    "test": "node test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^27.0.0"
+  }
+}
